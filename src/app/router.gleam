@@ -3,8 +3,8 @@ import gleam/http.{Get, Post}
 import gleam/string_tree
 import wisp.{type Request, type Response}
 
-pub fn handle_request(req: Request) -> Response {
-  use req <- web.middleware(req)
+pub fn handle_request(req: Request, ctx: web.Context) -> Response {
+  use req <- web.middleware(req, ctx)
 
   // Wisp doesn't have a special router abstraction, instead we recommend using
   // regular old pattern matching. This is faster than a router, is type safe,
