@@ -22,6 +22,10 @@ ENV FLYCTL_INSTALL="/home/gitpod/.fly"
 ENV PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 
+# watch exec
+RUN brew install watchexec
+
+
 # install doppler locally.
 RUN (curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh || wget -t 3 -qO- https://cli.doppler.com/install.sh) | sudo sh
 
