@@ -8,4 +8,5 @@ docker-build:
 
 .PHONY: docker-run
 docker-run: 
-	docker  run -it -p 8080:8080 latest
+	docker  run -it -p 8080:8080 latest 
+
