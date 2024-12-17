@@ -7,7 +7,6 @@ build
 
 **/*.beam
 **/*.ez
-build
 **/erl_crash.dump
 
 **/*.zip
@@ -15,3 +14,15 @@ build
 **/*.tar
 **/*.log
 fly.toml
+
+
+bin
+test
+README.md
+secrets.env
+Dockerfile
+fly.toml
+.github
+.gitignore
+Makefile
+.git
