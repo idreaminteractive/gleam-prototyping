@@ -1,5 +1,5 @@
+import app/context/ctx
 import app/router
-import app/web.{Context}
 import gleam/erlang/process
 import mist
 import wisp
@@ -9,7 +9,7 @@ pub fn main() {
   wisp.configure_logger()
   let secret_key_base = wisp.random_string(64)
 
-  let ctx = Context(static_directory: static_directory())
+  let ctx = ctx.Context(static_directory: static_directory(), items: [])
   let handler = router.handle_request(_, ctx)
 
   let assert Ok(_) =

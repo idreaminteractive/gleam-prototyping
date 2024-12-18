@@ -1,9 +1,15 @@
+import app/components/layout
+import app/context/ctx
+
+import app/pages/home
 import app/web
-import gleam/http.{Get, Post}
+import gleam/http.{Get}
 import gleam/string_tree
+import lustre/element
+
 import wisp.{type Request, type Response}
 
-pub fn handle_request(req: Request, ctx: web.Context) -> Response {
+pub fn handle_request(req: Request, ctx: ctx.Context) -> Response {
   use req <- web.middleware(req, ctx)
 
   // Wisp doesn't have a special router abstraction, instead we recommend using
@@ -12,62 +18,34 @@ pub fn handle_request(req: Request, ctx: web.Context) -> Response {
   //
   case wisp.path_segments(req) {
     // This matches `/`.
-    [] -> home_page(req)
+    [] -> home_page(req, ctx)
 
-    // This matches `/comments`.
-    ["comments"] -> comments(req)
+    ["items", "create"] -> {
+      use <- wisp.require_method(req, http.Post)
+      item_routes.post_create_item(req, ctx)
+    }
 
-    // This matches `/comments/:id`.
-    // The `id` segment is bound to a variable and passed to the handler.
-    ["comments", id] -> show_comment(req, id)
+    // not sure I need these bits?
+    ["internal-server-error"] -> wisp.internal_server_error()
+    ["unprocessable-entity"] -> wisp.unprocessable_entity()
+    ["method-not-allowed"] -> wisp.method_not_allowed([])
+    ["entity-too-large"] -> wisp.entity_too_large()
+    ["bad-request"] -> wisp.bad_request()
 
     // This matches all other paths.
     _ -> wisp.not_found()
   }
 }
 
-fn home_page(req: Request) -> Response {
+fn home_page(req: Request, ctx: ctx.Context) -> Response {
   // The home page can only be accessed via GET requests, so this middleware is
   // used to return a 405: Method Not Allowed response for all other methods.
   use <- wisp.require_method(req, Get)
+  let res =
+    [home.root(ctx.items)]
+    |> layout.layout
+    |> element.to_document_string_builder
 
-  let html = string_tree.from_string("Hello, Joe!")
   wisp.ok()
-  |> wisp.html_body(html)
-}
-
-fn comments(req: Request) -> Response {
-  // This handler for `/comments` can respond to both GET and POST requests,
-  // so we pattern match on the method here.
-  case req.method {
-    Get -> list_comments()
-    Post -> create_comment(req)
-    _ -> wisp.method_not_allowed([Get, Post])
-  }
-}
-
-fn list_comments() -> Response {
-  wisp.log_info("hey !o")
-  // In a later example we'll show how to read from a database.
-  let html = string_tree.from_string("Comments!")
-  wisp.ok()
-  |> wisp.html_body(html)
-}
-
-fn create_comment(_req: Request) -> Response {
-  // In a later example we'll show how to parse data from the request body.
-  let html = string_tree.from_string("Created")
-  wisp.created()
-  |> wisp.html_body(html)
-}
-
-fn show_comment(req: Request, id: String) -> Response {
-  use <- wisp.require_method(req, Get)
-
-  // The `id` path parameter has been passed to this function, so we could use
-  // it to look up a comment in a database.
-  // For now we'll just include in the response body.
-  let html = string_tree.from_string("Comment with id " <> id)
-  wisp.ok()
-  |> wisp.html_body(html)
+  |> wisp.html_body(res)
 }
