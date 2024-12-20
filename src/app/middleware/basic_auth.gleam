@@ -47,15 +47,23 @@ fn validate_basic_auth(
     }
     |> io.debug
 
-  basic_val
-  |> bit_array.base64_decode
-  |> fn(x) {
-    case x {
-      Ok(ba) -> ba
-      _ -> bit_array.from_string("")
+  let success =
+    basic_val
+    |> bit_array.base64_decode
+    |> fn(x) {
+      case x {
+        Ok(ba) -> ba
+        _ -> bit_array.from_string("")
+      }
     }
-  }
-  |> io.debug
+    |> string.split_once(on: ":")
+    |> io.debug
+    |> fn(x) {
+      case x {
+        
+      }
+    }
+
   False
 }
 
