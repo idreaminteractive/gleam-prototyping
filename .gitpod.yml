@@ -30,3 +30,4 @@ vscode:
     - adpyke.vscode-sql-formatter
     - yy0931.vscode-sqlite3-editor
     - gleam.gleam
+    - gruntfuggly.todo-tree

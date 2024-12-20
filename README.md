@@ -10,7 +10,7 @@ gleam add hey@1
 import hey
 
 pub fn main() {
-  // TODO: An example of the project in use
+  todo
 }
 ```
 
@@ -22,3 +22,8 @@ Further documentation can be found at <https://hexdocs.pm/hey>.
 gleam run   # Run the project
 gleam test  # Run the tests
 ```
+
+
+## Todo
+
+// Todo: 
