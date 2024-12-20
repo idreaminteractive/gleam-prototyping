@@ -20,7 +20,6 @@ pub fn handle_request(req: Request, ctx: ctx.Context) -> Response {
     // This matches `/`.
     [] -> home_page(req, ctx)
 
-    // not sure I need these bits?
     ["internal-server-error"] -> wisp.internal_server_error()
     ["unprocessable-entity"] -> wisp.unprocessable_entity()
     ["method-not-allowed"] -> wisp.method_not_allowed([])
