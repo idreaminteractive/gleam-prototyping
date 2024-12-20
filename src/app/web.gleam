@@ -1,6 +1,5 @@
 import app/context/ctx.{type Context}
-import app/middleware/items
-import app/models/item.{type Item}
+import app/middleware/basic_auth.{basic_auth_handler}
 import gleam/bool
 import gleam/string_tree
 import wisp
@@ -13,12 +12,16 @@ pub fn middleware(
   let req = wisp.method_override(req)
   use <- wisp.log_request(req)
   use <- wisp.rescue_crashes
+
+  // handle basic auth les go
+  use <- basic_auth_handler(req, "dave", "dave")
+
   use req <- wisp.handle_head(req)
   use <- wisp.serve_static(req, under: "/static", from: ctx.static_directory)
 
   use <- default_responses
 
-  use ctx <- items.items_middleware(req, ctx)
+  // use ctx <- items.items_middleware(req, ctx)
 
   handle_request(req)
 }

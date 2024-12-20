@@ -9,7 +9,7 @@ pub fn main() {
   wisp.configure_logger()
   let secret_key_base = wisp.random_string(64)
 
-  let ctx = ctx.Context(static_directory: static_directory(), items: [])
+  let ctx = ctx.Context(static_directory: static_directory())
   let handler = router.handle_request(_, ctx)
 
   let assert Ok(_) =

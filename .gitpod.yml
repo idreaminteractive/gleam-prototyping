@@ -1,11 +1,13 @@
 image:
   file: .gitpod.Dockerfile
 
-# tasks:
+tasks:
   # - init: |
       
-  # - command: |
-  #     mkdir data
+  - command: |
+      mkdir data
+      gleam build 
+      
 
 # ports:
 #   - name: Site

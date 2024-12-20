@@ -1,7 +1,7 @@
 import app/components/layout
 import app/context/ctx
 
-import app/pages/home
+import app/routes/home
 import app/web
 import gleam/http.{Get}
 import gleam/string_tree
@@ -20,11 +20,6 @@ pub fn handle_request(req: Request, ctx: ctx.Context) -> Response {
     // This matches `/`.
     [] -> home_page(req, ctx)
 
-    ["items", "create"] -> {
-      use <- wisp.require_method(req, http.Post)
-      item_routes.post_create_item(req, ctx)
-    }
-
     // not sure I need these bits?
     ["internal-server-error"] -> wisp.internal_server_error()
     ["unprocessable-entity"] -> wisp.unprocessable_entity()
@@ -42,7 +37,7 @@ fn home_page(req: Request, ctx: ctx.Context) -> Response {
   // used to return a 405: Method Not Allowed response for all other methods.
   use <- wisp.require_method(req, Get)
   let res =
-    [home.root(ctx.items)]
+    [home.root()]
     |> layout.layout
     |> element.to_document_string_builder
 
