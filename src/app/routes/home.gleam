@@ -1,7 +1,7 @@
-import lustre/attribute.{autofocus, class, name, placeholder}
+import lustre/attribute.{class}
 import lustre/element.{type Element, text}
 
-import lustre/element/html.{button, div, form, h1, input, span, svg}
+import lustre/element/html.{div, h1}
 
 pub fn root() -> Element(t) {
   div([class("app")], [

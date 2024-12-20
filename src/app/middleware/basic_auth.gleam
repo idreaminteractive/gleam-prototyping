@@ -1,15 +1,11 @@
 import gleam/bit_array
-import gleam/bool
-import gleam/dict
-import gleam/io
 import gleam/list
-import gleam/option
 import gleam/pair
 import gleam/result
 import gleam/string
 import wisp.{type Request, type Response}
 
-pub fn basic_auth_handler(
+pub fn basic_auth_middleware(
   req: Request,
   username: String,
   password: String,
@@ -28,7 +24,6 @@ pub fn basic_auth_handler(
         "WWW-Authenticate",
         "Basic realm=\"restricted\", charset=\"UTF-8\"",
       )
-    //   found it + it matches
     True -> response
   }
 }
@@ -38,38 +33,23 @@ fn validate_basic_auth(
   username: String,
   password: String,
 ) -> Bool {
-  // hmm,.
-  auth_header
-  |> result.try(string.split_once(_, on: " "))
-  |> result.unwrap(#("", ""))
-  |> pair.first
-  // |> result.try(fn(x) {
-  //   case x {
-  //     Ok(v) -> v.1
-  //     Error(_) -> ""
-  //   }
-  // })
-  |> io.debug
-  // ok - so we got the thing 
+  let valid = {
+    use b64_encoded <- result.try(string.split_once(auth_header, on: " "))
+    use uname_pw <- result.try(
+      b64_encoded
+      |> pair.second
+      |> bit_array.base64_decode,
+    )
 
-  // let success =
-  //   basic_val
-  //   |> bit_array.base64_decode
-  //   |> fn(x) {
-  //     case x {
-  //       Ok(ba) -> ba
-  //       _ -> bit_array.from_string("")
-  //     }
-  //   }
-  //   |> string.split_once(on: ":")
-  //   |> io.debug
-  //   |> fn(x) {
-  //     case x {
+    use s <- result.try(uname_pw |> bit_array.to_string)
+    use #(u, p) <- result.try(string.split_once(s, on: ":"))
+    Ok(u == username && p == password)
+  }
 
-  //     }
-  //   }
-
-  False
+  case valid {
+    Ok(True) -> True
+    _ -> False
+  }
 }
 
 fn extract_basic_auth_from_headers(headers: List(#(String, String))) -> String {

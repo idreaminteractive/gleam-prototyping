@@ -4,7 +4,7 @@ import app/context/ctx
 import app/routes/home
 import app/web
 import gleam/http.{Get}
-import gleam/string_tree
+
 import lustre/element
 
 import wisp.{type Request, type Response}
@@ -32,7 +32,7 @@ pub fn handle_request(req: Request, ctx: ctx.Context) -> Response {
   }
 }
 
-fn home_page(req: Request, ctx: ctx.Context) -> Response {
+fn home_page(req: Request, _ctx: ctx.Context) -> Response {
   // The home page can only be accessed via GET requests, so this middleware is
   // used to return a 405: Method Not Allowed response for all other methods.
   use <- wisp.require_method(req, Get)

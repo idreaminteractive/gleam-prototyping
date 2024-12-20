@@ -1,5 +1,5 @@
 import app/context/ctx.{type Context}
-import app/middleware/basic_auth.{basic_auth_handler}
+import app/middleware/basic_auth.{basic_auth_middleware}
 import gleam/bool
 import gleam/string_tree
 import wisp
@@ -14,7 +14,7 @@ pub fn middleware(
   use <- wisp.rescue_crashes
 
   // handle basic auth les go
-  use <- basic_auth_handler(req, "dave", "dave")
+  use <- basic_auth_middleware(req, "dave", "dave")
 
   use req <- wisp.handle_head(req)
   use <- wisp.serve_static(req, under: "/static", from: ctx.static_directory)
