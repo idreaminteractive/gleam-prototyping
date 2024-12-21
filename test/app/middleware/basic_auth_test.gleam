@@ -5,6 +5,7 @@ import gleam/bit_array
 import gleam/http/response
 import gleam/io
 import gleam/list
+import gleam/string
 
 import gleeunit/should
 import wisp/testing
@@ -35,6 +36,7 @@ pub fn get_basic_auth_with_bad_creds_test() {
     "dave:test"
     |> bit_array.from_string
     |> bit_array.base64_encode(True)
+    |> string.append(to: "Basic ")
 
   let request = testing.get("/", [#("authorization", creds)])
   let response = router.handle_request(request, ctx)
@@ -49,7 +51,8 @@ pub fn get_basic_auth_with_good_creds_test() {
   let creds =
     "dave:dave"
     |> bit_array.from_string
-    |> bit_array.base64_encode(False)
+    |> bit_array.base64_encode(True)
+    |> string.append(to: "Basic ")
 
   let request = testing.get("/", [#("authorization", creds)])
   let response = router.handle_request(request, ctx)

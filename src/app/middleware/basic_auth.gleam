@@ -15,7 +15,6 @@ pub fn basic_auth_middleware(
   let response = handler()
   let hashed =
     extract_basic_auth_from_headers(req.headers)
-    |> io.debug
     |> validate_basic_auth(username, password)
 
   //   nothing found 

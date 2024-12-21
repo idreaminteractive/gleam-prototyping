@@ -30,7 +30,6 @@ pub fn main() {
   "
   let assert Ok([#("Nubi", 4), #("Ginny", 6)]) =
     sqlight.query(sql, on: conn, with: [sqlight.int(7)], expecting: cat_decoder)
-    |> io.debug
 
   wisp.configure_logger()
   let secret_key_base = wisp.random_string(64)
