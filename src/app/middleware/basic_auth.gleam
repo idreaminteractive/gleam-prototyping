@@ -1,4 +1,5 @@
 import gleam/bit_array
+import gleam/io
 import gleam/list
 import gleam/pair
 import gleam/result
@@ -14,6 +15,7 @@ pub fn basic_auth_middleware(
   let response = handler()
   let hashed =
     extract_basic_auth_from_headers(req.headers)
+    |> io.debug
     |> validate_basic_auth(username, password)
 
   //   nothing found 
@@ -43,6 +45,7 @@ fn validate_basic_auth(
 
     use s <- result.try(uname_pw |> bit_array.to_string)
     use #(u, p) <- result.try(string.split_once(s, on: ":"))
+
     Ok(u == username && p == password)
   }
 
