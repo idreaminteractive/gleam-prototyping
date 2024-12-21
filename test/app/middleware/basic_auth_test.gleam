@@ -30,7 +30,7 @@ pub fn get_basic_auth_with_bad_creds_test() {
   |> should.equal(401)
 
   let creds =
-    "dave:test"
+    "invalid:credentials"
     |> bit_array.from_string
     |> bit_array.base64_encode(True)
     |> string.append(to: "Basic ")

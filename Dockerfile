@@ -19,7 +19,9 @@ RUN cd /build \
 
 # COPY litefs.yml /etc/litefs.yml
 
-# EXPOSE 8080
+# install dbmate for migrations
+RUN sudo curl -fsSL -o /usr/local/bin/dbmate https://github.com/amacneil/dbmate/releases/latest/download/dbmate-linux-amd64
+RUN sudo chmod +x /usr/local/bin/dbmate
 
 # Run the application
 USER webuser

@@ -22,6 +22,9 @@ ENV FLYCTL_INSTALL="/home/gitpod/.fly"
 ENV PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 
+# dbmate
+RUN sudo curl -fsSL -o /usr/local/bin/dbmate https://github.com/amacneil/dbmate/releases/latest/download/dbmate-linux-amd64
+RUN sudo chmod +x /usr/local/bin/dbmate
 
 
 # watch exec

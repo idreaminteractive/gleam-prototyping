@@ -1,6 +1,7 @@
 [X] Create basic web site
 [X] Add basic auth to cover the site + proteck
 [X] Add in snag for some better contextual error handling
+[X] Basic auth tests
 [ ] Hook in way to connect and read to + from db
 [ ] Add in lustre, formz, etc
 [ ] Get some sweet styling w/ sketch
