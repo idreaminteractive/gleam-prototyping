@@ -1,13 +1,13 @@
 # See https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
 
-name: Fly Deploy
+name: Test + Deploy
 on:
   push:
     branches:
       - main
 jobs:
-  test:
-    runs-on: ubuntu-24.04
+  Test:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1.18.2            
@@ -17,8 +17,8 @@ jobs:
           rebar3-version: '3.24.0'
       - run: gleam update
       - run: gleam test
-  deploy:
-    needs: test
+  Deploy:
+    needs: Test
     name: Deploy app
     runs-on: ubuntu-latest
     concurrency: deploy-group    # optional: ensure only one action runs at a time
