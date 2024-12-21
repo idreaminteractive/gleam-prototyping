@@ -6,6 +6,14 @@ on:
     branches:
       - main
 jobs:
+  test:
+    runs-on: self-hosted
+    env:
+      ImageOS: ubuntu20 # equivalent to runs-on ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+      - run: gleam test
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
