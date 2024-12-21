@@ -1,5 +1,5 @@
 import gleam/bit_array
-import gleam/io
+
 import gleam/list
 import gleam/pair
 import gleam/result
