@@ -14,9 +14,11 @@ jobs:
         with:
           otp-version: '27.1.2'
           gleam-version: '1.6.3'
+          rebar3-version: '3.24.0'
       - run: gleam update
       - run: gleam test
   deploy:
+    needs: test
     name: Deploy app
     runs-on: ubuntu-latest
     concurrency: deploy-group    # optional: ensure only one action runs at a time
