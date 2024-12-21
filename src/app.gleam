@@ -2,7 +2,6 @@ import app/context/ctx
 import app/router
 import gleam/dynamic
 import gleam/erlang/process
-import gleam/io
 import mist
 import sqlight
 import wisp

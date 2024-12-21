@@ -1,9 +1,6 @@
-import app
 import app/context/ctx
 import app/router
 import gleam/bit_array
-import gleam/http/response
-import gleam/io
 import gleam/list
 import gleam/string
 
