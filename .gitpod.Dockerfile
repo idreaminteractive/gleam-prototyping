@@ -1,5 +1,5 @@
 FROM gitpod/workspace-full:2024-12-04-13-05-19
-RUN sudo apt-get update && sudo apt-get install -y docker-buildx-plugin sqlite wget 
+RUN sudo apt-get update && sudo apt-get install -y docker-buildx-plugin sqlite wget inotify-tools
 
 RUN brew install asdf
 
@@ -20,6 +20,8 @@ RUN echo 'export PATH=$PATH:/$HOME/.asdf/shims' >> .bashrc
 RUN curl -L https://fly.io/install.sh | sh
 ENV FLYCTL_INSTALL="/home/gitpod/.fly"
 ENV PATH="$FLYCTL_INSTALL/bin:$PATH"
+
+
 
 
 # watch exec
