@@ -32,12 +32,19 @@ pub fn trade_card(
 }
 
 pub fn boring_cards(collections: List(Set(String))) -> List(String) {
-  list.fold(collections, [], fn(l, s) {
-    set.from_list(l)
-    |> set.intersection(s)
-    |> set.to_list
-  })
-  |> list.sort(string.compare)
+  case collections {
+    [] -> []
+    _ -> {
+      let assert Ok(first) = list.first(collections)
+      let assert Ok(rest) = list.rest(collections)
+      list.fold(rest, set.to_list(first), fn(l, s) {
+        set.from_list(l)
+        |> set.intersection(s)
+        |> set.to_list
+      })
+      |> list.sort(string.compare)
+    }
+  }
 }
 
 pub fn total_cards(collections: List(Set(String))) -> Int {
