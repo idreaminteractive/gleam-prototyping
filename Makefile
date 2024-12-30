@@ -10,3 +10,8 @@ docker-build:
 docker-run: 
 	docker  run -it -p 8080:8080 latest 
 
+
+.PHONY: ex 
+ex:
+	gleam run --module exercism/ex
+
