@@ -1,60 +1,54 @@
 import gleam/list
+import gleam/set.{type Set}
+import gleam/string
 
-pub fn place_location_to_treasure_location(
-  place_location: #(String, Int),
-) -> #(Int, String) {
-  let #(x, s) = place_location
-  #(s, x)
+pub fn new_collection(card: String) -> Set(String) {
+  set.new() |> set.insert(card)
 }
 
-pub fn treasure_location_matches_place_location(
-  place_location: #(String, Int),
-  treasure_location: #(Int, String),
-) -> Bool {
-  treasure_location == place_location_to_treasure_location(place_location)
+pub fn add_card(collection: Set(String), card: String) -> #(Bool, Set(String)) {
+  #(set.contains(collection, card), set.insert(collection, card))
 }
 
-// Implement the count_place_treasures function, that takes a place 
-// (such as #("Aqua Lagoon (Island of Mystery)", #("F", 1))),
-//   and the list of treasures, and returns the number of treasures that can be found there.
-
-pub fn count_place_treasures(
-  place: #(String, #(String, Int)),
-  treasures: List(#(String, #(Int, String))),
-) -> Int {
-  list.fold(treasures, 0, fn(count, l) { todo })
-}
-
-// Implement the special_case_swap_possible function, which takes a treasure (such as #("Amethyst Octopus", #(1, "F"))), 
-// a Place (such as #("Seaside Cottages", #("C", 1))) and a desired treasure (such as #("Crystal Crab", #(6, "A"))), 
-// and returns True for the following combinations:
-
-// The Brass Spyglass can be swapped for any other treasure at the Abandoned Lighthouse.
-// The Amethyst Octopus can be swapped for the Crystal Crab or the Glass Starfish at the Stormy Breakwater.
-// The Vintage Pirate Hat can be swapped for the Model Ship in Large Bottle or the Antique Glass Fishnet Float at the Harbor Managers Office.
-
-pub fn special_case_swap_possible(
-  found_treasure: #(String, #(Int, String)),
-  place: #(String, #(String, Int)),
-  desired_treasure: #(String, #(Int, String)),
-) -> Bool {
-  let treasure = found_treasure.0
-  let p = place.0
-  let d = desired_treasure.0
-
-  case treasure {
-    "Brass Spyglass" if p == "Abandoned Lighthouse" -> True
-    "Amethyst Octopus"
-      if { d == "Crystal Crab" || d == "Glass Starfish" }
-      && p == "Stormy Breakwater"
-    -> True
-    "Vintage Pirate Hat"
-      if {
-        d == "Model Ship in Large Bottle"
-        || d == "Antique Glass Fishnet Float"
-      }
-      && p == "Harbor Managers Office"
-    -> True
-    _ -> False
+pub fn trade_card(
+  my_card: String,
+  their_card: String,
+  collection: Set(String),
+) -> #(Bool, Set(String)) {
+  case set.contains(collection, my_card) {
+    False -> #(False, set.insert(collection, their_card))
+    True ->
+      fn() {
+        case set.contains(collection, their_card) {
+          False -> #(
+            True,
+            set.delete(collection, my_card) |> set.insert(their_card),
+          )
+          //   still trade ours?
+          True -> #(False, set.delete(collection, my_card))
+        }
+      }()
   }
+}
+
+pub fn boring_cards(collections: List(Set(String))) -> List(String) {
+  list.fold(collections, [], fn(l, s) {
+    set.from_list(l)
+    |> set.intersection(s)
+    |> set.to_list
+  })
+  |> list.sort(string.compare)
+}
+
+pub fn total_cards(collections: List(Set(String))) -> Int {
+  list.fold(collections, [], fn(l, s) {
+    set.from_list(l)
+    |> set.union(s)
+    |> set.to_list
+  })
+  |> list.length
+}
+
+pub fn shiny_cards(collection: Set(String)) -> Set(String) {
+  set.filter(collection, fn(s) { string.starts_with(s, "Shiny ") })
 }
