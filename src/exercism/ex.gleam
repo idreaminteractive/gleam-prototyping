@@ -1,61 +1,9 @@
-import gleam/list
-import gleam/set.{type Set}
-import gleam/string
+// TODO: please define the Pizza custom type
 
-pub fn new_collection(card: String) -> Set(String) {
-  set.new() |> set.insert(card)
+pub fn pizza_price(pizza: Pizza) -> Int {
+  todo
 }
 
-pub fn add_card(collection: Set(String), card: String) -> #(Bool, Set(String)) {
-  #(set.contains(collection, card), set.insert(collection, card))
-}
-
-pub fn trade_card(
-  my_card: String,
-  their_card: String,
-  collection: Set(String),
-) -> #(Bool, Set(String)) {
-  case set.contains(collection, my_card) {
-    False -> #(False, set.insert(collection, their_card))
-    True ->
-      fn() {
-        case set.contains(collection, their_card) {
-          False -> #(
-            True,
-            set.delete(collection, my_card) |> set.insert(their_card),
-          )
-          //   still trade ours?
-          True -> #(False, set.delete(collection, my_card))
-        }
-      }()
-  }
-}
-
-pub fn boring_cards(collections: List(Set(String))) -> List(String) {
-  case collections {
-    [] -> []
-    _ -> {
-      let assert Ok(first) = list.first(collections)
-      let assert Ok(rest) = list.rest(collections)
-      list.fold(rest, set.to_list(first), fn(l, s) {
-        set.from_list(l)
-        |> set.intersection(s)
-        |> set.to_list
-      })
-      |> list.sort(string.compare)
-    }
-  }
-}
-
-pub fn total_cards(collections: List(Set(String))) -> Int {
-  list.fold(collections, [], fn(l, s) {
-    set.from_list(l)
-    |> set.union(s)
-    |> set.to_list
-  })
-  |> list.length
-}
-
-pub fn shiny_cards(collection: Set(String)) -> Set(String) {
-  set.filter(collection, fn(s) { string.starts_with(s, "Shiny ") })
+pub fn order_price(order: List(Pizza)) -> Int {
+  todo
 }
