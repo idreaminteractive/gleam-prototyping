@@ -1,44 +1,50 @@
 import gleam/list
+import gleam/result
 
-// TODO: please define the Pizza custom type
-pub type Pizza {
-  Margherita
-  Caprese
-  Formaggio
-  ExtraSauce(Pizza)
-  ExtraToppings(Pizza)
+pub type Player {
+  Black
+  White
 }
 
-// Margherita: $7
-// Caprese: $9
-// Formaggio: $10
-// Customers can also choose two additional options for a small additional fee:
-
-// Extra sauce: $1
-// Extra toppings: $2
-// When customers place an order, an additional fee is added if they only order one or two pizzas:
-
-// 1 pizza: $3
-// 2 pizzas: $2
-
-pub fn pizza_price(pizza: Pizza) -> Int {
-  pizza_price_fn(pizza)
+pub type Game {
+  Game(
+    white_captured_stones: Int,
+    black_captured_stones: Int,
+    player: Player,
+    error: String,
+  )
 }
 
-fn pizza_price_fn(pizza: Pizza) -> Int {
-  case pizza {
-    Margherita -> 7
-    Caprese -> 9
-    Formaggio -> 10
-    ExtraSauce(a) -> 1 + pizza_price_fn(a)
-    ExtraToppings(a) -> 2 + pizza_price_fn(a)
+// here are 4 rules in the game:
+
+// Each point can only have one stone.
+// Opposition stones can be captured.
+// You can not place a stone where it would capture itself.
+// You can not use the same point twice.
+
+pub fn apply_rules(
+  game: Game,
+  rule1: fn(Game) -> Result(Game, String),
+  rule2: fn(Game) -> Game,
+  rule3: fn(Game) -> Result(Game, String),
+  rule4: fn(Game) -> Result(Game, String),
+) -> Game {
+  // -> If all rules pass, return a `Game` with all changes from the rules applied, and change player
+  // -> If any rule fails, return the original Game, but with the error field set
+  let result = {
+    use g <- result.try(rule1(game))
+    let g2 = rule2(g)
+    use g3 <- result.try(rule3(g2))
+    use g4 <- result.try(rule4(g3))
+    Ok(g4)
   }
-}
-
-pub fn order_price(order: List(Pizza)) -> Int {
-  case order {
-    [_] -> 3 + list.fold(order, 0, fn(price, pz) { pizza_price(pz) + price })
-    [_, _] -> 2 + list.fold(order, 0, fn(price, pz) { pizza_price(pz) + price })
-    _ -> list.fold(order, 0, fn(price, pz) { pizza_price(pz) + price })
+  case result {
+    Ok(g) -> {
+      case g.player {
+        White -> Game(..g, player: Black)
+        Black -> Game(..g, player: White)
+      }
+    }
+    Error(err) -> Game(..game, error: err)
   }
 }
