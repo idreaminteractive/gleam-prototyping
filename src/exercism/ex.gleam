@@ -1,11 +1,29 @@
-pub fn extract_error(problem: Result(a, b)) -> b {
-  todo
+// Please define the TreasureChest type
+
+import gleam/string
+
+pub opaque type TreasureChest(a) {
+
+  TreasureChest(treasure: a, password: String)
 }
 
-pub fn remove_team_prefix(team: String) -> String {
-  todo
+pub fn create(
+  password: String,
+  contents: treasure,
+) -> Result(TreasureChest(treasure), String) {
+  let l = string.length(password)
+  case l {
+    _ if l < 8 -> Error("Password must be at least 8 characters long")
+    _ -> Ok(TreasureChest(password:, treasure: contents))
+  }
 }
 
-pub fn split_region_and_team(combined: String) -> #(String, String) {
-  todo
+pub fn open(
+  chest: TreasureChest(treasure),
+  password: String,
+) -> Result(treasure, String) {
+  case chest {
+    TreasureChest(password: password, treasure: t) -> Ok(t)
+    _ -> Error("Incorrect password")
+  }
 }
