@@ -1,29 +1,19 @@
-// Please define the TreasureChest type
-
-import gleam/string
-
-pub opaque type TreasureChest(a) {
-
-  TreasureChest(treasure: a, password: String)
+pub fn read_emails(path: String) -> Result(List(String), Nil) {
+  todo
 }
 
-pub fn create(
-  password: String,
-  contents: treasure,
-) -> Result(TreasureChest(treasure), String) {
-  let l = string.length(password)
-  case l {
-    _ if l < 8 -> Error("Password must be at least 8 characters long")
-    _ -> Ok(TreasureChest(password:, treasure: contents))
-  }
+pub fn create_log_file(path: String) -> Result(Nil, Nil) {
+  todo
 }
 
-pub fn open(
-  chest: TreasureChest(treasure),
-  password: String,
-) -> Result(treasure, String) {
-  case chest {
-    TreasureChest(password: password, treasure: t) -> Ok(t)
-    _ -> Error("Incorrect password")
-  }
+pub fn log_sent_email(path: String, email: String) -> Result(Nil, Nil) {
+  todo
+}
+
+pub fn send_newsletter(
+  emails_path: String,
+  log_path: String,
+  send_email: fn(String) -> Result(Nil, Nil),
+) -> Result(Nil, Nil) {
+  todo
 }
