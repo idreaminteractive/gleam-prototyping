@@ -11,11 +11,3 @@ docker-run:
 	docker  run -it -p 8080:8080 latest 
 
 
-.PHONY: ex 
-ex:
-	gleam run --module exercism/ex
-
-
-.PHONY: http
-http: 
-	watchexec --restart --verbose --clear --wrap-process=session --stop-signal SIGTERM --exts gleam --watch src/ -- "gleam run --module sloth_http/http"
