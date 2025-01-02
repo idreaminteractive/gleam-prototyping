@@ -6,7 +6,12 @@ pub type Nucleotide {
 }
 
 pub fn encode_nucleotide(nucleotide: Nucleotide) -> Int {
-  todo
+  case nucleotide {
+    Adenine -> 0b00
+    Cytosine -> 0b01
+    Guanine -> 0b10
+    Thymine -> 0b11
+  }
 }
 
 pub fn decode_nucleotide(nucleotide: Int) -> Result(Nucleotide, Nil) {
