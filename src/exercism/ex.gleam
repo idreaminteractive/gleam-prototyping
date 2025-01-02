@@ -1,19 +1,22 @@
-pub fn read_emails(path: String) -> Result(List(String), Nil) {
+pub type Nucleotide {
+  Adenine
+  Cytosine
+  Guanine
+  Thymine
+}
+
+pub fn encode_nucleotide(nucleotide: Nucleotide) -> Int {
   todo
 }
 
-pub fn create_log_file(path: String) -> Result(Nil, Nil) {
+pub fn decode_nucleotide(nucleotide: Int) -> Result(Nucleotide, Nil) {
   todo
 }
 
-pub fn log_sent_email(path: String, email: String) -> Result(Nil, Nil) {
+pub fn encode(dna: List(Nucleotide)) -> BitArray {
   todo
 }
 
-pub fn send_newsletter(
-  emails_path: String,
-  log_path: String,
-  send_email: fn(String) -> Result(Nil, Nil),
-) -> Result(Nil, Nil) {
+pub fn decode(dna: BitArray) -> Result(List(Nucleotide), Nil) {
   todo
 }
