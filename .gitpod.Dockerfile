@@ -34,6 +34,8 @@ ENV PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 # install sqlc
 RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+# json generator to act as an intermediary to gleam
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc-gen-json@latest
 
 
 # dbmate 
@@ -43,6 +45,9 @@ RUN sudo chmod +x /usr/local/bin/dbmate
 
 # watch exec
 RUN brew install watchexec
+
+# install taskfile
+RUN sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin
 
 
 # install doppler locally.
