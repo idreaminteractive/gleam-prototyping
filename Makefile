@@ -11,3 +11,12 @@ docker-run:
 	docker  run -it -p 8080:8080 latest 
 
 
+.PHONY: create-migration
+create-migration:
+	DATABASE_URL="sqlite:db/database.sqlite3" dbmate -d "./migrations" new 
+
+
+.PHONY: migrate
+create-migration:
+	DATABASE_URL="sqlite:db/database.sqlite3" dbmate -d "./migrations" up
+
