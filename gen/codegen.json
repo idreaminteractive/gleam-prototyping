@@ -32,12 +32,12 @@
             "rel": {
               "catalog": "",
               "schema": "",
-              "name": "users"
+              "name": "user"
             },
             "columns": [
               {
                 "name": "id",
-                "not_null": false,
+                "not_null": true,
                 "is_array": false,
                 "comment": "",
                 "length": -1,
@@ -47,13 +47,13 @@
                 "table": {
                   "catalog": "",
                   "schema": "",
-                  "name": "users"
+                  "name": "user"
                 },
                 "table_alias": "",
                 "type": {
                   "catalog": "",
                   "schema": "",
-                  "name": "integer"
+                  "name": "INTEGER"
                 },
                 "is_sqlc_slice": false,
                 "embed_table": null,
@@ -63,6 +63,32 @@
               },
               {
                 "name": "name",
+                "not_null": true,
+                "is_array": false,
+                "comment": "",
+                "length": -1,
+                "is_named_param": false,
+                "is_func_call": false,
+                "scope": "",
+                "table": {
+                  "catalog": "",
+                  "schema": "",
+                  "name": "user"
+                },
+                "table_alias": "",
+                "type": {
+                  "catalog": "",
+                  "schema": "",
+                  "name": "varchar(255)"
+                },
+                "is_sqlc_slice": false,
+                "embed_table": null,
+                "original_name": "",
+                "unsigned": false,
+                "array_dims": 0
+              },
+              {
+                "name": "optional_example",
                 "not_null": false,
                 "is_array": false,
                 "comment": "",
@@ -73,13 +99,13 @@
                 "table": {
                   "catalog": "",
                   "schema": "",
-                  "name": "users"
+                  "name": "user"
                 },
                 "table_alias": "",
                 "type": {
                   "catalog": "",
                   "schema": "",
-                  "name": "varchar(255)"
+                  "name": "INTEGER"
                 },
                 "is_sqlc_slice": false,
                 "embed_table": null,
@@ -99,13 +125,65 @@
                 "table": {
                   "catalog": "",
                   "schema": "",
-                  "name": "users"
+                  "name": "user"
                 },
                 "table_alias": "",
                 "type": {
                   "catalog": "",
                   "schema": "",
                   "name": "varchar(255)"
+                },
+                "is_sqlc_slice": false,
+                "embed_table": null,
+                "original_name": "",
+                "unsigned": false,
+                "array_dims": 0
+              },
+              {
+                "name": "created_at",
+                "not_null": true,
+                "is_array": false,
+                "comment": "",
+                "length": -1,
+                "is_named_param": false,
+                "is_func_call": false,
+                "scope": "",
+                "table": {
+                  "catalog": "",
+                  "schema": "",
+                  "name": "user"
+                },
+                "table_alias": "",
+                "type": {
+                  "catalog": "",
+                  "schema": "",
+                  "name": "TIMESTAMP"
+                },
+                "is_sqlc_slice": false,
+                "embed_table": null,
+                "original_name": "",
+                "unsigned": false,
+                "array_dims": 0
+              },
+              {
+                "name": "updated_at",
+                "not_null": true,
+                "is_array": false,
+                "comment": "",
+                "length": -1,
+                "is_named_param": false,
+                "is_func_call": false,
+                "scope": "",
+                "table": {
+                  "catalog": "",
+                  "schema": "",
+                  "name": "user"
+                },
+                "table_alias": "",
+                "type": {
+                  "catalog": "",
+                  "schema": "",
+                  "name": "TIMESTAMP"
                 },
                 "is_sqlc_slice": false,
                 "embed_table": null,
@@ -124,13 +202,13 @@
   },
   "queries": [
     {
-      "text": "SELECT\n    id, name, email\nFROM\n    users",
+      "text": "SELECT\n    id, name, optional_example, email, created_at, updated_at\nFROM\n    user",
       "name": "ListUsers",
       "cmd": ":many",
       "columns": [
         {
           "name": "id",
-          "not_null": false,
+          "not_null": true,
           "is_array": false,
           "comment": "",
           "length": -1,
@@ -140,13 +218,13 @@
           "table": {
             "catalog": "",
             "schema": "",
-            "name": "users"
+            "name": "user"
           },
           "table_alias": "",
           "type": {
             "catalog": "",
             "schema": "",
-            "name": "integer"
+            "name": "INTEGER"
           },
           "is_sqlc_slice": false,
           "embed_table": null,
@@ -156,7 +234,7 @@
         },
         {
           "name": "name",
-          "not_null": false,
+          "not_null": true,
           "is_array": false,
           "comment": "",
           "length": -1,
@@ -166,7 +244,7 @@
           "table": {
             "catalog": "",
             "schema": "",
-            "name": "users"
+            "name": "user"
           },
           "table_alias": "",
           "type": {
@@ -177,6 +255,32 @@
           "is_sqlc_slice": false,
           "embed_table": null,
           "original_name": "name",
+          "unsigned": false,
+          "array_dims": 0
+        },
+        {
+          "name": "optional_example",
+          "not_null": false,
+          "is_array": false,
+          "comment": "",
+          "length": -1,
+          "is_named_param": false,
+          "is_func_call": false,
+          "scope": "",
+          "table": {
+            "catalog": "",
+            "schema": "",
+            "name": "user"
+          },
+          "table_alias": "",
+          "type": {
+            "catalog": "",
+            "schema": "",
+            "name": "INTEGER"
+          },
+          "is_sqlc_slice": false,
+          "embed_table": null,
+          "original_name": "optional_example",
           "unsigned": false,
           "array_dims": 0
         },
@@ -192,7 +296,122 @@
           "table": {
             "catalog": "",
             "schema": "",
-            "name": "users"
+            "name": "user"
+          },
+          "table_alias": "",
+          "type": {
+            "catalog": "",
+            "schema": "",
+            "name": "varchar(255)"
+          },
+          "is_sqlc_slice": false,
+          "embed_table": null,
+          "original_name": "email",
+          "unsigned": false,
+          "array_dims": 0
+        },
+        {
+          "name": "created_at",
+          "not_null": true,
+          "is_array": false,
+          "comment": "",
+          "length": -1,
+          "is_named_param": false,
+          "is_func_call": false,
+          "scope": "",
+          "table": {
+            "catalog": "",
+            "schema": "",
+            "name": "user"
+          },
+          "table_alias": "",
+          "type": {
+            "catalog": "",
+            "schema": "",
+            "name": "TIMESTAMP"
+          },
+          "is_sqlc_slice": false,
+          "embed_table": null,
+          "original_name": "created_at",
+          "unsigned": false,
+          "array_dims": 0
+        },
+        {
+          "name": "updated_at",
+          "not_null": true,
+          "is_array": false,
+          "comment": "",
+          "length": -1,
+          "is_named_param": false,
+          "is_func_call": false,
+          "scope": "",
+          "table": {
+            "catalog": "",
+            "schema": "",
+            "name": "user"
+          },
+          "table_alias": "",
+          "type": {
+            "catalog": "",
+            "schema": "",
+            "name": "TIMESTAMP"
+          },
+          "is_sqlc_slice": false,
+          "embed_table": null,
+          "original_name": "updated_at",
+          "unsigned": false,
+          "array_dims": 0
+        }
+      ],
+      "params": [],
+      "comments": [],
+      "filename": "query.sql",
+      "insert_into_table": null
+    },
+    {
+      "text": "SELECT\n    id,\n    email\nFROM\n    user\nWHERE\n    id = ?",
+      "name": "GetUserById",
+      "cmd": ":one",
+      "columns": [
+        {
+          "name": "id",
+          "not_null": true,
+          "is_array": false,
+          "comment": "",
+          "length": -1,
+          "is_named_param": false,
+          "is_func_call": false,
+          "scope": "",
+          "table": {
+            "catalog": "",
+            "schema": "",
+            "name": "user"
+          },
+          "table_alias": "",
+          "type": {
+            "catalog": "",
+            "schema": "",
+            "name": "INTEGER"
+          },
+          "is_sqlc_slice": false,
+          "embed_table": null,
+          "original_name": "id",
+          "unsigned": false,
+          "array_dims": 0
+        },
+        {
+          "name": "email",
+          "not_null": true,
+          "is_array": false,
+          "comment": "",
+          "length": -1,
+          "is_named_param": false,
+          "is_func_call": false,
+          "scope": "",
+          "table": {
+            "catalog": "",
+            "schema": "",
+            "name": "user"
           },
           "table_alias": "",
           "type": {
@@ -207,49 +426,12 @@
           "array_dims": 0
         }
       ],
-      "params": [],
-      "comments": [],
-      "filename": "query.sql",
-      "insert_into_table": null
-    },
-    {
-      "text": "SELECT\n    id\nFROM\n    users\nWHERE\n    id = ?",
-      "name": "GetUserById",
-      "cmd": ":one",
-      "columns": [
-        {
-          "name": "id",
-          "not_null": false,
-          "is_array": false,
-          "comment": "",
-          "length": -1,
-          "is_named_param": false,
-          "is_func_call": false,
-          "scope": "",
-          "table": {
-            "catalog": "",
-            "schema": "",
-            "name": "users"
-          },
-          "table_alias": "",
-          "type": {
-            "catalog": "",
-            "schema": "",
-            "name": "integer"
-          },
-          "is_sqlc_slice": false,
-          "embed_table": null,
-          "original_name": "id",
-          "unsigned": false,
-          "array_dims": 0
-        }
-      ],
       "params": [
         {
           "number": 1,
           "column": {
             "name": "id",
-            "not_null": false,
+            "not_null": true,
             "is_array": false,
             "comment": "",
             "length": -1,
@@ -259,13 +441,13 @@
             "table": {
               "catalog": "",
               "schema": "",
-              "name": "users"
+              "name": "user"
             },
             "table_alias": "",
             "type": {
               "catalog": "",
               "schema": "",
-              "name": "integer"
+              "name": "INTEGER"
             },
             "is_sqlc_slice": false,
             "embed_table": null,

@@ -31,6 +31,9 @@ pub fn main() {
   let _ =
     config.get_module_directory(conf)
     |> simplifile.create_directory_all()
+
+  let generated_data = ""
+
   let _ =
     simplifile.write(
       to: config.get_module_path(conf),

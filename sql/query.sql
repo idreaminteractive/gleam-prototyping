@@ -2,12 +2,13 @@
 SELECT
     *
 FROM
-    users;
+    user;
 
 -- name: GetUserById :one 
 SELECT
-    id
+    id,
+    email
 FROM
-    users
+    user
 WHERE
     id = ?;

@@ -25,8 +25,6 @@ tasks:
       - task: remove-dbs
       - task: local-migrate
       - task: sqlc
-      - task: seed
-
 
   sqlc:
     cmds:
