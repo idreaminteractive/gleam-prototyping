@@ -29,3 +29,4 @@ gleam_otp = ">= 0.16.0 and < 1.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"
+lustre_dev_tools = ">= 1.6.5 and < 2.0.0"

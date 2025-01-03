@@ -12,6 +12,7 @@ import wisp/wisp_mist
 
 pub fn main() {
   use conn <- sqlight.with_connection(":memory:")
+
   let cat_decoder = dynamic.tuple2(dynamic.string, dynamic.int)
 
   let sql =
