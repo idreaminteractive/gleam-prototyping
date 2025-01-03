@@ -26,6 +26,7 @@ snag = ">= 1.1.0 and < 2.0.0"
 sqlight = { path = "./vendor/sqlight" }
 glisten = ">= 7.0.0 and < 8.0.0"
 gleam_otp = ">= 0.16.0 and < 1.0.0"
+birl = ">= 1.8.0 and < 2.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

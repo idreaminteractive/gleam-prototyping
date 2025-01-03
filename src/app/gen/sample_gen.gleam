@@ -1,6 +1,7 @@
+import birl
 import gleam/dynamic/decode
 import gleam/option.{type Option}
-import gleam/result
+
 import sqlight
 
 pub type GetUserById {
@@ -13,7 +14,7 @@ fn get_user_by_id_decoder() {
   decode.success(GetUserById(id:, email:))
 }
 
-fn get_user_by_id_sql(id: Int) {
+fn get_user_by_id_sql() {
   let sql =
     "
   SELECT
@@ -30,7 +31,7 @@ WHERE
 
 pub fn get_user_by_id(conn: sqlight.Connection, id: Int) {
   sqlight.query(
-    get_user_by_id_sql(id),
+    get_user_by_id_sql(),
     on: conn,
     with: [sqlight.int(id)],
     expecting: get_user_by_id_decoder(),
@@ -43,21 +44,65 @@ pub type ListUsersRow {
     name: String,
     optional_example: Option(Int),
     email: String,
-    created_at: Int,
-    updated_at: Int,
+    created_at: birl.Time,
+    updated_at: birl.Time,
   )
 }
 
 pub type ListUsers =
   List(ListUsersRow)
 
-pub fn list_users_sql() {
+fn decode_birl_time_from_string() -> decode.Decoder(birl.Time) {
+  decode.string
+  |> decode.then(fn(v: String) {
+    case birl.parse(v) {
+      Ok(time) -> decode.success(time)
+      Error(_err) -> decode.success(birl.now())
+    }
+  })
+}
+
+fn list_users_decoder() {
+  use id <- decode.field(0, decode.int)
+  use name <- decode.field(1, decode.string)
+  use optional_example <- decode.field(2, decode.optional(decode.int))
+  use email <- decode.field(3, decode.string)
+  use created_at <- decode.field(4, decode_birl_time_from_string())
+
+  use updated_at <- decode.field(5, decode_birl_time_from_string())
+  decode.success(ListUsersRow(
+    id:,
+    name:,
+    optional_example:,
+    email:,
+    created_at:,
+    updated_at:,
+  ))
+  // decode.success(GetUserById(id:, email:))
+}
+
+fn list_users_sql() {
   let sql =
     "
- SELECT
-    *
+SELECT
+    id,
+    name, 
+    optional_example,
+    email,
+    created_at,
+    updated_at
 FROM
     user;
   "
-  #(sql, Nil)
+
+  sql
+}
+
+pub fn list_users(conn: sqlight.Connection) {
+  sqlight.query(
+    list_users_sql(),
+    on: conn,
+    with: [],
+    expecting: list_users_decoder(),
+  )
 }

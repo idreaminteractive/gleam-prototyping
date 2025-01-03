@@ -1,8 +1,10 @@
 import app/chat_actor/chat.{handle_message}
 import app/context/ctx
+import app/gen/sample_gen
 import app/router
-import gleam/dynamic
+
 import gleam/erlang/process
+import gleam/io
 import gleam/otp/actor
 import mist
 
@@ -14,6 +16,8 @@ pub fn main() {
   wisp.configure_logger()
   let secret_key_base = wisp.random_string(64)
 
+  use conn <- sqlight.with_connection("./data/sqlite.db")
+  let _ = sample_gen.list_users(conn) |> io.debug
   let assert Ok(my_actor) = actor.start([], handle_message)
   let ctx = ctx.Context(static_directory: static_directory(), subject: my_actor)
   let handler = router.handle_request(_, ctx)
