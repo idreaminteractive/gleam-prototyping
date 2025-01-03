@@ -3,7 +3,9 @@
 [X] Add in snag for some better contextual error handling
 [X] Basic auth tests
 [ ] Hook in way to connect and read to + from db
-[ ] Add in lustre, formz, etc
+[ ] Save the chat to the db + retrieve on load
+[ ] Make it use websockets + lustre thing with comms 
+[ ] Add in lustre, formz, etc 
 [ ] Get some sweet styling w/ sketch
 [ ] Clean up db things
 [ ] Work on SSR setup + test w/ lustre 
