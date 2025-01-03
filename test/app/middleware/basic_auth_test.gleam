@@ -1,14 +1,18 @@
+import app/chat_actor/chat
 import app/context/ctx
 import app/router
 import gleam/bit_array
+
 import gleam/list
+import gleam/otp/actor
 import gleam/string
 
 import gleeunit/should
 import wisp/testing
 
 pub fn get_basic_auth_fail_test() {
-  let ctx = ctx.Context("")
+  let assert Ok(my_actor) = actor.start([], chat.handle_message)
+  let ctx = ctx.Context("", my_actor)
   let request = testing.get("/", [])
   let response = router.handle_request(request, ctx)
 
@@ -21,7 +25,8 @@ pub fn get_basic_auth_fail_test() {
 }
 
 pub fn get_basic_auth_with_bad_creds_test() {
-  let ctx = ctx.Context("")
+  let assert Ok(my_actor) = actor.start([], chat.handle_message)
+  let ctx = ctx.Context("", my_actor)
 
   let request = testing.get("/", [#("authorization", "")])
   let response = router.handle_request(request, ctx)
@@ -43,7 +48,8 @@ pub fn get_basic_auth_with_bad_creds_test() {
 }
 
 pub fn get_basic_auth_with_good_creds_test() {
-  let ctx = ctx.Context("")
+  let assert Ok(my_actor) = actor.start([], chat.handle_message)
+  let ctx = ctx.Context("", my_actor)
 
   let creds =
     "dave:dave"

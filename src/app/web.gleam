@@ -22,7 +22,6 @@ pub fn middleware(
   use <- default_responses
 
   // use ctx <- items.items_middleware(req, ctx)
-
   handle_request(req)
 }
 

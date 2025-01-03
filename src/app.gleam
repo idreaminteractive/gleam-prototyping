@@ -1,8 +1,11 @@
+import app/chat_actor/chat.{handle_message}
 import app/context/ctx
 import app/router
 import gleam/dynamic
 import gleam/erlang/process
+import gleam/otp/actor
 import mist
+
 import sqlight
 import wisp
 import wisp/wisp_mist
@@ -33,7 +36,8 @@ pub fn main() {
   wisp.configure_logger()
   let secret_key_base = wisp.random_string(64)
 
-  let ctx = ctx.Context(static_directory: static_directory())
+  let assert Ok(my_actor) = actor.start([], handle_message)
+  let ctx = ctx.Context(static_directory: static_directory(), subject: my_actor)
   let handler = router.handle_request(_, ctx)
 
   let assert Ok(_) =
