@@ -41,7 +41,7 @@ packages = [
   { name = "sketch", version = "3.1.2", build_tools = ["gleam"], requirements = ["gleam_erlang", "gleam_otp", "gleam_stdlib"], otp_app = "sketch", source = "hex", outer_checksum = "85E41BC0BE2E5D8985EF34F0D2FD7315329A463FC845570EC5D399F20F8AFA08" },
   { name = "sketch_lustre", version = "1.0.3", build_tools = ["gleam"], requirements = ["gleam_stdlib", "lustre", "plinth", "sketch"], otp_app = "sketch_lustre", source = "hex", outer_checksum = "DD5437B10D4BB8AB45A19820B17883188B8568B6ED7885D7D073A983F4984E79" },
   { name = "snag", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "snag", source = "hex", outer_checksum = "7E9F06390040EB5FAB392CE642771484136F2EC103A92AE11BA898C8167E6E17" },
-  { name = "sqlight", version = "0.9.1", build_tools = ["gleam"], requirements = ["esqlite", "gleam_stdlib"], otp_app = "sqlight", source = "hex", outer_checksum = "A495F2892627B2268CCBCC5107EDC1E1AD9547D5F4F21A5DB04CEA72B8931B00" },
+  { name = "sqlight", version = "0.9.1", build_tools = ["gleam"], requirements = ["esqlite", "gleam_stdlib"], source = "local", path = "vendor/sqlight" },
   { name = "telemetry", version = "1.3.0", build_tools = ["rebar3"], requirements = [], otp_app = "telemetry", source = "hex", outer_checksum = "7015FC8919DBE63764F4B4B87A95B7C0996BD539E0D499BE6EC9D7F3875B79E6" },
   { name = "term_size", version = "1.0.1", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "term_size", source = "hex", outer_checksum = "D00BD2BC8FB3EBB7E6AE076F3F1FF2AC9D5ED1805F004D0896C784D06C6645F1" },
   { name = "tom", version = "1.1.1", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "tom", source = "hex", outer_checksum = "0910EE688A713994515ACAF1F486A4F05752E585B9E3209D8F35A85B234C2719" },
@@ -62,5 +62,5 @@ simplifile = { version = ">= 2.2.0 and < 3.0.0" }
 sketch = { version = ">= 3.1.2 and < 4.0.0" }
 sketch_lustre = { version = ">= 1.0.3 and < 2.0.0" }
 snag = { version = ">= 1.1.0 and < 2.0.0" }
-sqlight = { version = ">= 0.9.1 and < 1.0.0" }
+sqlight = { path = "./vendor/sqlight" }
 wisp = { version = ">= 1.3.0 and < 2.0.0" }
