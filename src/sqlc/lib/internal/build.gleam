@@ -4,6 +4,7 @@ import gleam/list
 import gleam/string
 import sqlc/lib/internal/sqlc
 
+// TODO - expand on the star selects 
 // TODO - Add in optional for nullables
 // TODO - add in handling for multi
 // TODO - test with delete + update, including returning

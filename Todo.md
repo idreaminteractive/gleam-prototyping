@@ -2,6 +2,7 @@
 [X] Add basic auth to cover the site + proteck
 [X] Add in snag for some better contextual error handling
 [X] Basic auth tests
+[ ] Finish hacking together the db stuff 
 [ ] Hook in way to connect and read to + from db
 [ ] Save the chat to the db + retrieve on load
 [ ] Make it use websockets + lustre thing with comms 
