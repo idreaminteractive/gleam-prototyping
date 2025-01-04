@@ -9,6 +9,45 @@ import gleam/option.{type Option}
 
 import sqlight
 
+fn decode_birl_time_from_string() -> decode.Decoder(birl.Time) {
+  decode.string
+  |> decode.then(fn(v: String) {
+    case birl.parse(v) {
+      Ok(time) -> decode.success(time)
+      Error(_err) -> decode.success(birl.now())
+    }
+  })
+}
+
+pub type GetAnotherOne {
+  GetAnotherOne(email: String, created_at: birl.Time)
+}
+
+fn get_another_one_decoder() {
+  use email <- decode.field(0, decode.string)
+  use created_at <- decode.field(1, decode_birl_time_from_string())
+  decode.success(GetAnotherOne(email:, created_at:))
+}
+
+fn get_another_one_sql() {
+  "Select
+    email,
+    created_at
+from
+    user
+where
+    id = 1"
+}
+
+pub fn get_another_one(conn: sqlight.Connection) {
+  sqlight.query(
+    get_another_one_sql(),
+    on: conn,
+    with: [],
+    expecting: get_another_one_decoder(),
+  )
+}
+
 pub type GetUserById {
   GetUserById(id: Int, email: String)
 }

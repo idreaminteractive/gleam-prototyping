@@ -460,6 +460,69 @@
       "comments": [],
       "filename": "query.sql",
       "insert_into_table": null
+    },
+    {
+      "text": "Select\n    email,\n    created_at\nfrom\n    user\nwhere\n    id = 1",
+      "name": "GetAnotherOne",
+      "cmd": ":one",
+      "columns": [
+        {
+          "name": "email",
+          "not_null": true,
+          "is_array": false,
+          "comment": "",
+          "length": -1,
+          "is_named_param": false,
+          "is_func_call": false,
+          "scope": "",
+          "table": {
+            "catalog": "",
+            "schema": "",
+            "name": "user"
+          },
+          "table_alias": "",
+          "type": {
+            "catalog": "",
+            "schema": "",
+            "name": "varchar(255)"
+          },
+          "is_sqlc_slice": false,
+          "embed_table": null,
+          "original_name": "email",
+          "unsigned": false,
+          "array_dims": 0
+        },
+        {
+          "name": "created_at",
+          "not_null": true,
+          "is_array": false,
+          "comment": "",
+          "length": -1,
+          "is_named_param": false,
+          "is_func_call": false,
+          "scope": "",
+          "table": {
+            "catalog": "",
+            "schema": "",
+            "name": "user"
+          },
+          "table_alias": "",
+          "type": {
+            "catalog": "",
+            "schema": "",
+            "name": "TIMESTAMP"
+          },
+          "is_sqlc_slice": false,
+          "embed_table": null,
+          "original_name": "created_at",
+          "unsigned": false,
+          "array_dims": 0
+        }
+      ],
+      "params": [],
+      "comments": [],
+      "filename": "query.sql",
+      "insert_into_table": null
     }
   ],
   "sqlc_version": "v1.27.0",

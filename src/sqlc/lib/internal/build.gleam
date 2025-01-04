@@ -1,9 +1,13 @@
 import gleam/int
-import gleam/io
 import gleam/list
-import gleam/result
+
 import gleam/string
 import sqlc/lib/internal/sqlc
+
+// TODO - Add in optional for nullables
+// TODO - add in handling for multi
+// TODO - test with delete + update, including returning
+// TODO - find out how to test generated code like this
 
 pub fn build(sqlc: sqlc.SQLC) -> String {
   import_section() <> build_queries(sqlc.queries, "")
@@ -23,6 +27,18 @@ import gleam/dynamic/decode
 import gleam/option.{type Option}
 
 import sqlight
+
+
+fn decode_birl_time_from_string() -> decode.Decoder(birl.Time) {
+  decode.string
+  |> decode.then(fn(v: String) {
+    case birl.parse(v) {
+      Ok(time) -> decode.success(time)
+      Error(_err) -> decode.success(birl.now())
+    }
+  })
+}
+
 "
 }
 
@@ -35,10 +51,9 @@ fn gleam_name_to_query_name(gname: String) -> String {
 }
 
 fn query_name_to_gleam(qname: String) -> String {
+  // GetUserById -> get_user_by_id
   // regardless of the query name, it needs to be snake case
   // if we find a capital, make it _<lower>
-  // "AZaz_" |> string.to_utf_codepoints |> io.debug
-
   qname
   |> string.to_utf_codepoints
   |> list.map(string.utf_codepoint_to_int)
@@ -65,9 +80,8 @@ fn query_name_to_gleam(qname: String) -> String {
 fn build_query(query: sqlc.Query) -> String {
   let query_name = query.name
   let sql = query.text
-  let query_return_data =
-    query.columns
-    |> io.debug
+  let query_return_data = query.columns
+
   let query_type_string = case query.cmd {
     sqlc.One ->
       build_single_type(sql, query_name, query_return_data, query.params)
@@ -91,7 +105,7 @@ fn build_single_type(
   }
   
   fn " <> query_name_to_gleam(query_name) <> "_decoder() {
-  " <> build_decoder_func(query_name, query_columns) <> "
+  " <> build_decoder_func(query_columns) <> "
   " <> build_decoder_success(query_name, query_columns) <> "
   }
 
@@ -107,8 +121,8 @@ pub fn " <> query_name_to_gleam(query_name) <> "(conn: sqlight.Connection, " <> 
   sqlight.query(
     " <> query_name_to_gleam(query_name) <> "_sql(),
     on: conn,
-    with: [sqlight.int(id)],
-    expecting: get_user_by_id_decoder(),
+    with: [" <> build_query_sql_params(params) |> string.join(",") <> "],
+    expecting: " <> query_name_to_gleam(query_name) <> "_decoder(),
   )
 }
   "
@@ -139,10 +153,7 @@ fn build_query_fn_params(params: List(sqlc.QueryParam)) -> List(String) {
   }
 }
 
-fn build_decoder_func(
-  query_name: String,
-  query_columns: List(sqlc.TableColumn),
-) -> String {
+fn build_decoder_func(query_columns: List(sqlc.TableColumn)) -> String {
   build_decoder_use_lines(query_columns, 0, [])
   |> list.reverse
   |> string.join("\n")
@@ -212,6 +223,7 @@ fn sql_type_to_gleam(t: String) -> String {
   case t {
     "INTEGER" -> "Int"
     "varchar" <> _ -> "String"
+    "TIMESTAMP" -> "birl.Time"
     _ -> "unknown"
   }
 }
@@ -220,6 +232,7 @@ fn sql_type_to_decoder_type(t: String) -> String {
   case t {
     "INTEGER" -> "decode.int"
     "varchar" <> _ -> "decode.string"
+    "TIMESTAMP" -> "decode_birl_time_from_string()"
     _ -> "unknown"
   }
 }
