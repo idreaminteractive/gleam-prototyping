@@ -2,3 +2,38 @@
 //// versions:
 ////   sqlc_gen_gleam v1.0.0
 ////
+
+import birl
+import gleam/dynamic/decode
+import gleam/option.{type Option}
+
+import sqlight
+
+pub type GetUserById {
+  GetUserById(id: Int, email: String)
+}
+
+fn get_user_by_id_decoder() {
+  use id <- decode.field(0, decode.int)
+  use email <- decode.field(1, decode.string)
+  decode.success(GetUserById(id:, email:))
+}
+
+fn get_user_by_id_sql() {
+  "SELECT
+    id,
+    email
+FROM
+    user
+WHERE
+    id = ?"
+}
+
+pub fn get_user_by_id(conn: sqlight.Connection, id: Int) {
+  sqlight.query(
+    get_user_by_id_sql(),
+    on: conn,
+    with: [sqlight.int(id)],
+    expecting: get_user_by_id_decoder(),
+  )
+}

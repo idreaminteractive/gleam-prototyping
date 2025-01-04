@@ -4,6 +4,7 @@ import gleam/json
 import gleam/list
 import simplifile
 import sqlc/lib/config
+import sqlc/lib/internal/build
 import sqlc/lib/internal/generate
 import sqlc/lib/internal/lib
 import sqlc/lib/internal/sqlc
@@ -24,22 +25,16 @@ pub fn main() {
   use dyn_json <- lib.try_nil(json.decode(from: json_string, using: d.dynamic))
 
   let assert Ok(parsed) = sqlc.decode_sqlc(dyn_json)
-  parsed |> io.debug
-  parsed.queries
-  |> list.map(fn(q) { q.params |> io.debug })
 
   let _ =
     config.get_module_directory(conf)
     |> simplifile.create_directory_all()
 
-  let generated_data = ""
-
   let _ =
     simplifile.write(
       to: config.get_module_path(conf),
-      contents: generate.comment_dont_edit(),
+      contents: generate.comment_dont_edit() <> build.build(parsed),
     )
-    |> io.debug
 
   Ok(Nil)
 }

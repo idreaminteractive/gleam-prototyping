@@ -29,6 +29,9 @@ tasks:
   sqlc:
     cmds:
       - sqlc generate
+      - rm src/app/gen/sqlc_sqlite.gleam
+      - gleam run --module sqlc/sqlc
+      - gleam format
 
   create-migration:
     cmds:
@@ -44,8 +47,8 @@ tasks:
 
   docker-run:
     cmds:
-      - docker  run -it -p 8080:8080 latest 
+      - docker  run -it -p 8080:8080 latest
 
   load-test:
     cmds:
-      - docker run --net=host --rm williamyeh/wrk -t10 -c100 -d10s http://localhost:8080/  
+      - docker run --net=host --rm williamyeh/wrk -t10 -c100 -d10s http://localhost:8080/
