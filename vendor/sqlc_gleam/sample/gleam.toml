@@ -1,4 +1,4 @@
-name = "sqlc_gleam"
+name = "sample"
 version = "1.0.0"
 
 # Fill out these fields if you intend to generate HTML documentation or publish
@@ -14,11 +14,9 @@ version = "1.0.0"
 
 [dependencies]
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"
-glemplate = ">= 8.1.0 and < 9.0.0"
-simplifile = ">= 2.2.0 and < 3.0.0"
 sqlight = ">= 1.0.0 and < 2.0.0"
-tom = ">= 1.1.1 and < 2.0.0"
-gleam_json = ">= 2.3.0 and < 3.0.0"
+birl = ">= 1.8.0 and < 2.0.0"
+sqlc_gleam = { path = "../" }
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

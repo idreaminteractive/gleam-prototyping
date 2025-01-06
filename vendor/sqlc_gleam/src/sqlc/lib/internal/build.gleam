@@ -4,9 +4,19 @@ import gleam/list
 import gleam/string
 import sqlc/lib/internal/sqlc
 
+// TODO - up to 1.7.0
+// TODO - investigate templating libraries instead as the string interp sucks 
+// TODO - build out tests for this thing to validate output and details 
+// For this one:
+// copy a "project" to a subfolder w/ all the details 
+// run sqlc + sqlc json
+// run migrations
+// run gen
+// run some tests 
 // TODO - expand on the star selects 
 // TODO - Add in optional for nullables
 // TODO - add in handling for multi
+// TODO - add in ability to handle `in` queries
 // TODO - test with delete + update, including returning
 // TODO - find out how to test generated code like this
 
