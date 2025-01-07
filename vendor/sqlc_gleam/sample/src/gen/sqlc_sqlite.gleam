@@ -5,6 +5,7 @@
 import birl
 import gleam/dynamic/decode
 import gleam/option.{type Option}
+import gleam/result
 
 import sqlight
 
@@ -19,7 +20,193 @@ fn decode_birl_time_from_string() -> decode.Decoder(birl.Time) {
   })
 }
 
-pub type GetAnotherOne { 
+pub type UpdatePost { 
+    UpdatePost(id: Int,title: String,is_public: Option(Bool),owner_id: Int,created_at: birl.Time,updated_at: birl.Time)
+  }
+  
+  fn update_post_decoder() {
+  use id <- decode.field(0, decode.int)
+use title <- decode.field(1, decode.string)
+use is_public <- decode.field(2, decode.optional(sqlight.decode_bool()))
+use owner_id <- decode.field(3, decode.int)
+use created_at <- decode.field(4, decode_birl_time_from_string())
+use updated_at <- decode.field(5, decode_birl_time_from_string())
+  decode.success(UpdatePost(id:,title:,is_public:,owner_id:,created_at:,updated_at:))
+  }
+
+  fn update_post_sql() {
+    "update
+    post
+set
+    title = ?
+where
+    id = ? returning id, title, is_public, owner_id, created_at, updated_at"
+  }
+
+
+pub fn update_post(conn: sqlight.Connection, title title: String,id id: Int) {
+  sqlight.query(
+    update_post_sql(),
+    on: conn,
+    with: [sqlight.text(title),sqlight.int(id)],
+    expecting: update_post_decoder(),
+  )
+  |> result.try(fn(x) {
+      case x {
+        [val] -> Ok(val)
+        [] -> Error(sqlight.SqlightError(sqlight.Notfound, "No records found", 0))
+        _ -> Error(sqlight.SqlightError(sqlight.Mismatch, "More than one record found", 0))
+      }
+    })
+  
+}
+  pub type CreatePost { 
+    CreatePost(id: Int,title: String,is_public: Option(Bool),owner_id: Int,created_at: birl.Time,updated_at: birl.Time)
+  }
+  
+  fn create_post_decoder() {
+  use id <- decode.field(0, decode.int)
+use title <- decode.field(1, decode.string)
+use is_public <- decode.field(2, decode.optional(sqlight.decode_bool()))
+use owner_id <- decode.field(3, decode.int)
+use created_at <- decode.field(4, decode_birl_time_from_string())
+use updated_at <- decode.field(5, decode_birl_time_from_string())
+  decode.success(CreatePost(id:,title:,is_public:,owner_id:,created_at:,updated_at:))
+  }
+
+  fn create_post_sql() {
+    "insert into
+    post (title, owner_id)
+values
+    (?, ?) returning id, title, is_public, owner_id, created_at, updated_at"
+  }
+
+
+pub fn create_post(conn: sqlight.Connection, title title: String,owner_id owner_id: Int) {
+  sqlight.query(
+    create_post_sql(),
+    on: conn,
+    with: [sqlight.text(title),sqlight.int(owner_id)],
+    expecting: create_post_decoder(),
+  )
+  |> result.try(fn(x) {
+      case x {
+        [val] -> Ok(val)
+        [] -> Error(sqlight.SqlightError(sqlight.Notfound, "No records found", 0))
+        _ -> Error(sqlight.SqlightError(sqlight.Mismatch, "More than one record found", 0))
+      }
+    })
+  
+}
+  pub type CreateUser { 
+    CreateUser(id: Int,name: String,optional_example: Option(Int),email: String,created_at: birl.Time,updated_at: birl.Time)
+  }
+  
+  fn create_user_decoder() {
+  use id <- decode.field(0, decode.int)
+use name <- decode.field(1, decode.string)
+use optional_example <- decode.field(2, decode.optional(decode.int))
+use email <- decode.field(3, decode.string)
+use created_at <- decode.field(4, decode_birl_time_from_string())
+use updated_at <- decode.field(5, decode_birl_time_from_string())
+  decode.success(CreateUser(id:,name:,optional_example:,email:,created_at:,updated_at:))
+  }
+
+  fn create_user_sql() {
+    "insert into
+    user (name, email)
+values
+    (?, ?) returning id, name, optional_example, email, created_at, updated_at"
+  }
+
+
+pub fn create_user(conn: sqlight.Connection, name name: String,email email: String) {
+  sqlight.query(
+    create_user_sql(),
+    on: conn,
+    with: [sqlight.text(name),sqlight.text(email)],
+    expecting: create_user_decoder(),
+  )
+  |> result.try(fn(x) {
+      case x {
+        [val] -> Ok(val)
+        [] -> Error(sqlight.SqlightError(sqlight.Notfound, "No records found", 0))
+        _ -> Error(sqlight.SqlightError(sqlight.Mismatch, "More than one record found", 0))
+      }
+    })
+  
+}
+  pub type GetPostsByListOfUsers { 
+    GetPostsByListOfUsers(id: Int,title: String,uid: Option(Int))
+  }
+  
+  fn get_posts_by_list_of_users_decoder() {
+  use id <- decode.field(0, decode.int)
+use title <- decode.field(1, decode.string)
+use uid <- decode.field(2, decode.optional(decode.int))
+  decode.success(GetPostsByListOfUsers(id:,title:,uid:))
+  }
+
+  fn get_posts_by_list_of_users_sql() {
+    "SELECT
+    p.id,
+    p.title,
+    u.id as uid
+from
+    post p
+    left join user u on u.id = p.owner_id
+WHERE
+    u.id IN (/*SLICE:ids*/?)"
+  }
+
+
+pub fn get_posts_by_list_of_users(conn: sqlight.Connection, ids ids: Int) {
+  sqlight.query(
+    get_posts_by_list_of_users_sql(),
+    on: conn,
+    with: [sqlight.int(ids)],
+    expecting: get_posts_by_list_of_users_decoder(),
+  )
+  
+  
+}
+  pub type GetPostsByUser { 
+    GetPostsByUser(id: Int,title: String,uid: Int,email: String)
+  }
+  
+  fn get_posts_by_user_decoder() {
+  use id <- decode.field(0, decode.int)
+use title <- decode.field(1, decode.string)
+use uid <- decode.field(2, decode.int)
+use email <- decode.field(3, decode.string)
+  decode.success(GetPostsByUser(id:,title:,uid:,email:))
+  }
+
+  fn get_posts_by_user_sql() {
+    "SELECT
+    p.id,
+    p.title,
+    u.id as uid,
+    u.email
+from
+    post p
+    join user u on u.id = p.owner_id
+where
+    u.id = ?"
+  }
+
+
+pub fn get_posts_by_user(conn: sqlight.Connection, id id: Int) {
+  sqlight.query(
+    get_posts_by_user_sql(),
+    on: conn,
+    with: [sqlight.int(id)],
+    expecting: get_posts_by_user_decoder(),
+  )
+  
+  
+}
+  pub type GetAnotherOne { 
     GetAnotherOne(email: String,created_at: birl.Time)
   }
   
@@ -47,21 +234,32 @@ pub fn get_another_one(conn: sqlight.Connection, ) {
     with: [],
     expecting: get_another_one_decoder(),
   )
+  |> result.try(fn(x) {
+      case x {
+        [val] -> Ok(val)
+        [] -> Error(sqlight.SqlightError(sqlight.Notfound, "No records found", 0))
+        _ -> Error(sqlight.SqlightError(sqlight.Mismatch, "More than one record found", 0))
+      }
+    })
+  
 }
   pub type GetUserById { 
-    GetUserById(id: Int,email: String)
+    GetUserById(id: Int,name: String,optional_example: Option(Int),email: String,created_at: birl.Time,updated_at: birl.Time)
   }
   
   fn get_user_by_id_decoder() {
   use id <- decode.field(0, decode.int)
-use email <- decode.field(1, decode.string)
-  decode.success(GetUserById(id:,email:))
+use name <- decode.field(1, decode.string)
+use optional_example <- decode.field(2, decode.optional(decode.int))
+use email <- decode.field(3, decode.string)
+use created_at <- decode.field(4, decode_birl_time_from_string())
+use updated_at <- decode.field(5, decode_birl_time_from_string())
+  decode.success(GetUserById(id:,name:,optional_example:,email:,created_at:,updated_at:))
   }
 
   fn get_user_by_id_sql() {
     "SELECT
-    id,
-    email
+    id, name, optional_example, email, created_at, updated_at
 FROM
     user
 WHERE
@@ -69,12 +267,84 @@ WHERE
   }
 
 
-pub fn get_user_by_id(conn: sqlight.Connection, id: Int) {
+pub fn get_user_by_id(conn: sqlight.Connection, id id: Int) {
   sqlight.query(
     get_user_by_id_sql(),
     on: conn,
     with: [sqlight.int(id)],
     expecting: get_user_by_id_decoder(),
   )
+  |> result.try(fn(x) {
+      case x {
+        [val] -> Ok(val)
+        [] -> Error(sqlight.SqlightError(sqlight.Notfound, "No records found", 0))
+        _ -> Error(sqlight.SqlightError(sqlight.Mismatch, "More than one record found", 0))
+      }
+    })
+  
+}
+  pub type ListPosts { 
+    ListPosts(id: Int,title: String,is_public: Option(Bool),owner_id: Int,created_at: birl.Time,updated_at: birl.Time)
+  }
+  
+  fn list_posts_decoder() {
+  use id <- decode.field(0, decode.int)
+use title <- decode.field(1, decode.string)
+use is_public <- decode.field(2, decode.optional(sqlight.decode_bool()))
+use owner_id <- decode.field(3, decode.int)
+use created_at <- decode.field(4, decode_birl_time_from_string())
+use updated_at <- decode.field(5, decode_birl_time_from_string())
+  decode.success(ListPosts(id:,title:,is_public:,owner_id:,created_at:,updated_at:))
+  }
+
+  fn list_posts_sql() {
+    "Select
+    id, title, is_public, owner_id, created_at, updated_at
+from
+    post"
+  }
+
+
+pub fn list_posts(conn: sqlight.Connection, ) {
+  sqlight.query(
+    list_posts_sql(),
+    on: conn,
+    with: [],
+    expecting: list_posts_decoder(),
+  )
+  
+  
+}
+  pub type ListUsers { 
+    ListUsers(id: Int,name: String,optional_example: Option(Int),email: String,created_at: birl.Time,updated_at: birl.Time)
+  }
+  
+  fn list_users_decoder() {
+  use id <- decode.field(0, decode.int)
+use name <- decode.field(1, decode.string)
+use optional_example <- decode.field(2, decode.optional(decode.int))
+use email <- decode.field(3, decode.string)
+use created_at <- decode.field(4, decode_birl_time_from_string())
+use updated_at <- decode.field(5, decode_birl_time_from_string())
+  decode.success(ListUsers(id:,name:,optional_example:,email:,created_at:,updated_at:))
+  }
+
+  fn list_users_sql() {
+    "SELECT
+    id, name, optional_example, email, created_at, updated_at
+FROM
+    user"
+  }
+
+
+pub fn list_users(conn: sqlight.Connection, ) {
+  sqlight.query(
+    list_users_sql(),
+    on: conn,
+    with: [],
+    expecting: list_users_decoder(),
+  )
+  
+  
 }
   

@@ -1,24 +1,18 @@
 import gleam/int
 import gleam/list
+import sqlight
 
 import gleam/string
 import sqlc/lib/internal/sqlc
 
-// TODO - up to 1.7.0
 // TODO - investigate templating libraries instead as the string interp sucks 
-// TODO - build out tests for this thing to validate output and details 
-// For this one:
-// copy a "project" to a subfolder w/ all the details 
-// run sqlc + sqlc json
-// run migrations
-// run gen
-// run some tests 
-// TODO - expand on the star selects 
+
 // TODO - Add in optional for nullables
 // TODO - add in handling for multi
 // TODO - add in ability to handle `in` queries
 // TODO - test with delete + update, including returning
 // TODO - find out how to test generated code like this
+// TODO - build out tests for this thing to validate output and details 
 
 pub fn build(sqlc: sqlc.SQLC) -> String {
   import_section() <> build_queries(sqlc.queries, "")
@@ -36,6 +30,7 @@ fn import_section() -> String {
 import birl
 import gleam/dynamic/decode
 import gleam/option.{type Option}
+import gleam/result
 
 import sqlight
 
@@ -89,24 +84,72 @@ fn query_name_to_gleam(qname: String) -> String {
 }
 
 fn build_query(query: sqlc.Query) -> String {
-  let query_name = query.name
-  let sql = query.text
-  let query_return_data = query.columns
-
   let query_type_string = case query.cmd {
     sqlc.One ->
-      build_single_type(sql, query_name, query_return_data, query.params)
-    sqlc.Many -> ""
+      build_query_output(
+        query.text,
+        query.name,
+        query.columns,
+        query.params,
+        True,
+      )
+    sqlc.Many ->
+      build_query_output(
+        query.text,
+        query.name,
+        query.columns,
+        query.params,
+        False,
+      )
     _ -> ""
   }
   query_type_string
 }
 
-fn build_single_type(
-  sql: String,
-  query_name: String,
-  query_columns: List(sqlc.TableColumn),
-  params: List(sqlc.QueryParam),
+// fn build_multi_type(
+//   sql: String,
+//   query_name: String,
+//   query_columns: List(sqlc.TableColumn),
+//   params: List(sqlc.QueryParam),
+// ) {
+//   let out = "pub type " <> query_name <> " { 
+//     " <> query_name <> "(" <> string.join(
+//       ret_data_array_string(query_columns, []),
+//       ",",
+//     ) <> ")
+//   }
+
+//   fn " <> query_name_to_gleam(query_name) <> "_decoder() {
+//   " <> build_decoder_func(query_columns) <> "
+//   " <> build_decoder_success(query_name, query_columns) <> "
+//   }
+
+//   fn " <> query_name_to_gleam(query_name) <> "_sql() {
+//     \"" <> sql <> "\"
+//   }
+
+// pub fn " <> query_name_to_gleam(query_name) <> "(conn: sqlight.Connection, " <> build_query_fn_params(
+//       params,
+//     )
+//     |> string.join(",") <> ") {
+//   sqlight.query(
+//     " <> query_name_to_gleam(query_name) <> "_sql(),
+//     on: conn,
+//     with: [" <> build_query_sql_params(params) |> string.join(",") <> "],
+//     expecting: " <> query_name_to_gleam(query_name) <> "_decoder(),
+//   )
+// }
+//   "
+
+//   out
+// }
+
+fn build_query_output(
+  sql sql: String,
+  name query_name: String,
+  columns query_columns: List(sqlc.TableColumn),
+  params params: List(sqlc.QueryParam),
+  restrict_one single_result_only: Bool,
 ) {
   let out = "pub type " <> query_name <> " { 
     " <> query_name <> "(" <> string.join(
@@ -135,10 +178,26 @@ pub fn " <> query_name_to_gleam(query_name) <> "(conn: sqlight.Connection, " <> 
     with: [" <> build_query_sql_params(params) |> string.join(",") <> "],
     expecting: " <> query_name_to_gleam(query_name) <> "_decoder(),
   )
+  " <> restrict_to_one_result(single_result_only) <> "
+  
 }
   "
 
   out
+}
+
+fn restrict_to_one_result(enforce: Bool) -> String {
+  case enforce {
+    True ->
+      "|> result.try(fn(x) {
+      case x {
+        [val] -> Ok(val)
+        [] -> Error(sqlight.SqlightError(sqlight.Notfound, \"No records found\", 0))
+        _ -> Error(sqlight.SqlightError(sqlight.Mismatch, \"More than one record found\", 0))
+      }
+    })"
+    False -> ""
+  }
 }
 
 fn build_query_sql_params(params: List(sqlc.QueryParam)) -> List(String) {
@@ -158,7 +217,11 @@ fn build_query_fn_params(params: List(sqlc.QueryParam)) -> List(String) {
   case params {
     [] -> []
     [first, ..rest] -> [
-      first.column.name <> ": " <> sql_type_to_gleam(first.column.type_ref.name),
+      first.column.name
+        <> " "
+        <> first.column.name
+        <> ": "
+        <> sql_type_to_gleam(first.column.type_ref.name),
       ..build_query_fn_params(rest)
     ]
   }
@@ -191,7 +254,7 @@ fn build_decoder_use_line(field: sqlc.TableColumn, id: Int) -> String {
   <> " <- decode.field("
   <> int.to_string(id)
   <> ", "
-  <> sql_type_to_decoder_type(field.type_ref.name)
+  <> sql_type_to_decoder_type(field.type_ref.name, !field.not_null)
   <> ")"
 }
 
@@ -222,35 +285,52 @@ fn ret_data_array_string(
   case query_columns {
     [] -> output
     [first, ..rest] -> {
-      [
-        first.name <> ": " <> sql_type_to_gleam(first.type_ref.name),
-        ..ret_data_array_string(rest, output)
-      ]
+      case first.not_null {
+        True -> [
+          first.name <> ": " <> sql_type_to_gleam(first.type_ref.name),
+          ..ret_data_array_string(rest, output)
+        ]
+        False -> [
+          first.name
+            <> ": Option("
+            <> sql_type_to_gleam(first.type_ref.name)
+            <> ")",
+          ..ret_data_array_string(rest, output)
+        ]
+      }
     }
   }
 }
 
 fn sql_type_to_gleam(t: String) -> String {
-  case t {
-    "INTEGER" -> "Int"
+  case string.lowercase(t) {
+    "boolean" -> "Bool"
+    "integer" -> "Int"
     "varchar" <> _ -> "String"
-    "TIMESTAMP" -> "birl.Time"
+    "timestamp" -> "birl.Time"
     _ -> "unknown"
   }
 }
 
-fn sql_type_to_decoder_type(t: String) -> String {
-  case t {
-    "INTEGER" -> "decode.int"
-    "varchar" <> _ -> "decode.string"
-    "TIMESTAMP" -> "decode_birl_time_from_string()"
-    _ -> "unknown"
+fn sql_type_to_decoder_type(t: String, optional: Bool) -> String {
+  case string.lowercase(t), optional {
+    "boolean", True -> "decode.optional(sqlight.decode_bool())"
+    "boolean", False -> "sqlight.decode_bool()"
+    "integer", True -> "decode.optional(decode.int)"
+    "integer", False -> "decode.int"
+    "varchar" <> _, True -> "decode.optional(decode.string)"
+    "varchar" <> _, False -> "decode.string"
+    // we don't handle optional timestmaps yet
+    "timestamp", _ -> "decode_birl_time_from_string()"
+
+    _, _ -> "unknown"
   }
 }
 
 fn param_type_to_sqlite_with(t: String) -> String {
-  case t {
-    "INTEGER" -> "sqlight.int"
+  case string.lowercase(t) {
+    "boolean" -> "sqlight.bool"
+    "integer" -> "sqlight.int"
     "varchar" <> _ -> "sqlight.text"
     _ -> "unknown"
   }
