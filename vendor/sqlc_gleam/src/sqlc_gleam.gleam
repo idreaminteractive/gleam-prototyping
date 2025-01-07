@@ -1,5 +1,5 @@
-import gleam/io
+import sqlc/sqlc
 
 pub fn main() {
-  io.println("Hello from sqlc_gleam!")
+  sqlc.run_codegen()
 }

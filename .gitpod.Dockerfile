@@ -20,7 +20,7 @@ RUN asdf plugin-add rebar https://github.com/Stratus3D/asdf-rebar.git
 RUN asdf plugin-add gleam
 
 # install our versions
-ENV GLEAM_VERSION=1.6.3
+ENV GLEAM_VERSION=1.7.0
 ENV ERLANG_VERSION=27.1.2
 ENV REBAR_VERSION=3.24.0
 RUN echo "gleam ${GLEAM_VERSION}\nerlang ${ERLANG_VERSION}\nrebar ${REBAR_VERSION}" | tee -a .tool-versions

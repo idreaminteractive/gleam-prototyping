@@ -1,7 +1,5 @@
 import gleam/dynamic as d
-import gleam/io
 import gleam/json
-import gleam/list
 import simplifile
 import sqlc/lib/config
 import sqlc/lib/internal/build
@@ -10,7 +8,7 @@ import sqlc/lib/internal/lib
 import sqlc/lib/internal/sqlc
 
 // we'll use our code gen files as the source + build out what we need to do here 
-pub fn main() {
+pub fn run_codegen() {
   let codegen_path = "gen/codegen.json"
   let assert Ok(True) = simplifile.is_file(codegen_path)
   //   ok - it's a path. let's go 
@@ -18,7 +16,7 @@ pub fn main() {
   let conf =
     config.Config(
       json_file_path: "gen/codegen.json",
-      gleam_module_out_path: "app/gen/sqlc_sqlite.gleam",
+      gleam_module_out_path: "gen/sqlc_sqlite.gleam",
     )
   use json_string <- lib.try_nil(config.get_json_file(conf))
 
