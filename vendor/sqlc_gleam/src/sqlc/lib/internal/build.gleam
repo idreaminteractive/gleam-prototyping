@@ -1,18 +1,16 @@
 import gleam/int
+import gleam/io
 import gleam/list
-import sqlight
 
 import gleam/string
 import sqlc/lib/internal/sqlc
 
 // TODO - investigate templating libraries instead as the string interp sucks 
-
-// TODO - Add in optional for nullables
-// TODO - add in handling for multi
 // TODO - add in ability to handle `in` queries
-// TODO - test with delete + update, including returning
+
 // TODO - find out how to test generated code like this
 // TODO - build out tests for this thing to validate output and details 
+// TODO - other options for query cmds (exec result, etc)
 
 pub fn build(sqlc: sqlc.SQLC) -> String {
   import_section() <> build_queries(sqlc.queries, "")
@@ -101,48 +99,11 @@ fn build_query(query: sqlc.Query) -> String {
         query.params,
         False,
       )
+    sqlc.Exec -> build_exec_output(query.text, query.name, query.params)
     _ -> ""
   }
   query_type_string
 }
-
-// fn build_multi_type(
-//   sql: String,
-//   query_name: String,
-//   query_columns: List(sqlc.TableColumn),
-//   params: List(sqlc.QueryParam),
-// ) {
-//   let out = "pub type " <> query_name <> " { 
-//     " <> query_name <> "(" <> string.join(
-//       ret_data_array_string(query_columns, []),
-//       ",",
-//     ) <> ")
-//   }
-
-//   fn " <> query_name_to_gleam(query_name) <> "_decoder() {
-//   " <> build_decoder_func(query_columns) <> "
-//   " <> build_decoder_success(query_name, query_columns) <> "
-//   }
-
-//   fn " <> query_name_to_gleam(query_name) <> "_sql() {
-//     \"" <> sql <> "\"
-//   }
-
-// pub fn " <> query_name_to_gleam(query_name) <> "(conn: sqlight.Connection, " <> build_query_fn_params(
-//       params,
-//     )
-//     |> string.join(",") <> ") {
-//   sqlight.query(
-//     " <> query_name_to_gleam(query_name) <> "_sql(),
-//     on: conn,
-//     with: [" <> build_query_sql_params(params) |> string.join(",") <> "],
-//     expecting: " <> query_name_to_gleam(query_name) <> "_decoder(),
-//   )
-// }
-//   "
-
-//   out
-// }
 
 fn build_query_output(
   sql sql: String,
@@ -180,6 +141,31 @@ pub fn " <> query_name_to_gleam(query_name) <> "(conn: sqlight.Connection, " <> 
   )
   " <> restrict_to_one_result(single_result_only) <> "
   
+}
+  "
+
+  out
+}
+
+fn build_exec_output(
+  sql sql: String,
+  name query_name: String,
+  params params: List(sqlc.QueryParam),
+) {
+  let out = "
+  fn " <> query_name_to_gleam(query_name) <> "_sql() {
+    \"" <> sql <> "\"
+  }
+
+
+pub fn " <> query_name_to_gleam(query_name) <> "(conn: sqlight.Connection, " <> build_query_fn_params(
+      params,
+    )
+    |> string.join(",") <> ") {
+  sqlight.exec(
+    " <> query_name_to_gleam(query_name) <> "_sql(),
+    on: conn
+  )  
 }
   "
 

@@ -1,5 +1,6 @@
 import gen/sqlc_sqlite
 import gleam/io
+import gleam/list
 import pprint
 import sqlight
 
@@ -20,8 +21,13 @@ pub fn main() {
   let assert Ok(results) = sqlc_sqlite.get_posts_by_user(conn, user.id)
   sqlc_sqlite.update_post(conn, "new title for second post", post.id)
 
-  let assert Ok(results) =
-    sqlc_sqlite.get_posts_by_user(conn, user.id) |> pprint.debug
+  let assert Ok(results) = sqlc_sqlite.get_posts_by_user(conn, user.id)
+  list.length(results) |> pprint.debug
+
+  let assert Ok(_) = sqlc_sqlite.clear_posts(conn)
+
+  let assert Ok(results) = sqlc_sqlite.get_posts_by_user(conn, user.id)
+  list.length(results) |> pprint.debug
 
   Nil
 }

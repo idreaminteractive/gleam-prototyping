@@ -54,7 +54,7 @@ pub type QueryCmd {
   One
   Many
   Exec
-  ExecResult
+  // ExecResult
   Unknown
 }
 
@@ -170,8 +170,8 @@ pub fn decode_sqlc(data: dynamic.Dynamic) {
       case cmd {
         ":one" -> decode.success(One)
         ":many" -> decode.success(Many)
-        ":exec" -> decode.success(ExecResult)
-        ":execresult" -> decode.success(ExecResult)
+        ":exec" -> decode.success(Exec)
+        // ":execresult" -> decode.success(ExecResult)
         _ -> decode.failure(Unknown, "Failed")
       }
     })
