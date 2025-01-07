@@ -19,7 +19,7 @@ pub fn main() {
   let assert Ok(post_list) = sqlc_sqlite.list_posts(conn)
   let assert Ok(results) = sqlc_sqlite.get_posts_by_user(conn, user.id)
   sqlc_sqlite.update_post(conn, "new title for second post", post.id)
-  |> pprint.debug
+
   let assert Ok(results) =
     sqlc_sqlite.get_posts_by_user(conn, user.id) |> pprint.debug
 
