@@ -10,6 +10,7 @@ import sqlc/lib/internal/templates
 import sqlc/lib/internal/type_convert
 
 // DONE - I've concluded templating engines stink
+// TODO - why do other packages need to be in here
 // TODO - finish reorg of templating out the strings
 // TODO - add in ability to handle `in` queries
 
