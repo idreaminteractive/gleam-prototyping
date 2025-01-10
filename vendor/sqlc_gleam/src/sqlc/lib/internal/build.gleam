@@ -10,6 +10,7 @@ import sqlc/lib/internal/templates
 import sqlc/lib/internal/type_convert
 
 // DONE - I've concluded templating engines stink
+// TODO - finish reorg of templating out the strings
 // TODO - add in ability to handle `in` queries
 
 // TODO - find out how to test generated code like this
@@ -78,40 +79,12 @@ fn build_query_output(
     build_decoder_func(query_columns),
     build_decoder_success(query_name, query_columns),
   )
-  <> "
-  fn "
-  <> justin.snake_case(query_name)
-  <> "_sql() {
-    \""
-  <> sql
-  <> "\"
-  }
-
-
-pub fn "
-  <> justin.snake_case(query_name)
-  <> "(conn: sqlight.Connection, "
-  <> build_query_fn_params(params)
-  |> string.join(",")
-  <> ") {
-  sqlight.query(
-    "
-  <> justin.snake_case(query_name)
-  <> "_sql(),
-    on: conn,
-    with: ["
-  <> build_query_sql_params(params) |> string.join(",")
-  <> "],
-    expecting: "
-  <> justin.snake_case(query_name)
-  <> "_decoder(),
+  <> templates.add_sql_string_fn(query_name, sql)
+  <> templates.add_sqlight_call(
+    query_name,
+    build_sqlight_query_fn_params(params),
+    single_result_only,
   )
-  "
-  <> restrict_to_one_result(single_result_only)
-  <> "
-  
-}
-  "
 }
 
 fn build_exec_output(
@@ -125,7 +98,7 @@ fn build_exec_output(
   }
 
 
-pub fn " <> justin.snake_case(query_name) <> "(conn: sqlight.Connection, " <> build_query_fn_params(
+pub fn " <> justin.snake_case(query_name) <> "(conn: sqlight.Connection, " <> build_sqlight_query_fn_params(
       params,
     )
     |> string.join(",") <> ") {
@@ -137,20 +110,6 @@ pub fn " <> justin.snake_case(query_name) <> "(conn: sqlight.Connection, " <> bu
   "
 
   out
-}
-
-fn restrict_to_one_result(enforce: Bool) -> String {
-  case enforce {
-    True ->
-      "|> result.try(fn(x) {
-      case x {
-        [val] -> Ok(val)
-        [] -> Error(sqlight.SqlightError(sqlight.Notfound, \"No records found\", 0))
-        _ -> Error(sqlight.SqlightError(sqlight.Mismatch, \"More than one record found\", 0))
-      }
-    })"
-    False -> ""
-  }
 }
 
 fn build_query_sql_params(params: List(sqlc.QueryParam)) -> List(String) {
@@ -166,7 +125,7 @@ fn build_query_sql_params(params: List(sqlc.QueryParam)) -> List(String) {
   }
 }
 
-fn build_query_fn_params(params: List(sqlc.QueryParam)) -> List(String) {
+fn build_sqlight_query_fn_params(params: List(sqlc.QueryParam)) -> List(String) {
   case params {
     [] -> []
     [first, ..rest] -> [
@@ -175,7 +134,7 @@ fn build_query_fn_params(params: List(sqlc.QueryParam)) -> List(String) {
         <> first.column.name
         <> ": "
         <> type_convert.sql_type_to_gleam(first.column.type_ref.name),
-      ..build_query_fn_params(rest)
+      ..build_sqlight_query_fn_params(rest)
     ]
   }
 }

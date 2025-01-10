@@ -3,11 +3,10 @@ image:
 
 tasks:
   # - init: |
-      
+
   - command: |
       mkdir data
-      gleam build 
-      
+      gleam build
 
 # ports:
 #   - name: Site
@@ -32,4 +31,5 @@ vscode:
     - adpyke.vscode-sql-formatter
     - yy0931.vscode-sqlite3-editor
     - gleam.gleam
+    - trag1c.gleam-theme
     - gruntfuggly.todo-tree
