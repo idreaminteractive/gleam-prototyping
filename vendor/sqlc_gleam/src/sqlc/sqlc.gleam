@@ -1,6 +1,6 @@
 import gleam/dynamic as d
 import gleam/json
-import pprint
+
 import simplifile
 import sqlc/lib/config
 import sqlc/lib/internal/build
@@ -25,11 +25,11 @@ pub fn run_codegen() {
 
   let assert Ok(parsed) = sqlc.decode_sqlc(dyn_json)
 
-  let _ =
+  let assert Ok(_) =
     config.get_module_directory(conf)
     |> simplifile.create_directory_all()
 
-  let _ =
+  let assert Ok(_) =
     simplifile.write(
       to: config.get_module_path(conf),
       contents: generate.comment_dont_edit() <> build.build(parsed),
