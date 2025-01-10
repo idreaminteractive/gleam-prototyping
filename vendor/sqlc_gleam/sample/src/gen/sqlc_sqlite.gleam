@@ -21,7 +21,7 @@ fn decode_birl_time_from_string() -> decode.Decoder(birl.Time) {
 }
 
 fn clear_posts_sql() {
-  "delete from
+  "DELETE FROM
     post"
 }
 
@@ -58,11 +58,11 @@ fn update_post_decoder() {
 }
 
 fn update_post_sql() {
-  "update
+  "UPDATE
     post
-set
+SET
     title = ?
-where
+WHERE
     id = ? returning id, title, is_public, owner_id, created_at, updated_at"
 }
 
@@ -116,9 +116,9 @@ fn create_post_decoder() {
 }
 
 fn create_post_sql() {
-  "insert into
+  "INSERT INTO
     post (title, owner_id)
-values
+VALUES
     (?, ?) returning id, title, is_public, owner_id, created_at, updated_at"
 }
 
@@ -176,9 +176,9 @@ fn create_user_decoder() {
 }
 
 fn create_user_sql() {
-  "insert into
+  "INSERT INTO
     user (name, email)
-values
+VALUES
     (?, ?) returning id, name, optional_example, email, created_at, updated_at"
 }
 
@@ -222,10 +222,10 @@ fn get_posts_by_list_of_users_sql() {
   "SELECT
     p.id,
     p.title,
-    u.id as uid
-from
+    u.id AS uid
+FROM
     post p
-    left join user u on u.id = p.owner_id
+    LEFT JOIN user u ON u.id = p.owner_id
 WHERE
     u.id IN (/*SLICE:ids*/?)"
 }
@@ -255,12 +255,12 @@ fn get_posts_by_user_sql() {
   "SELECT
     p.id,
     p.title,
-    u.id as uid,
+    u.id AS uid,
     u.email
-from
+FROM
     post p
-    join user u on u.id = p.owner_id
-where
+    INNER JOIN user u ON u.id = p.owner_id
+WHERE
     u.id = ?"
 }
 
@@ -401,9 +401,9 @@ fn list_posts_decoder() {
 }
 
 fn list_posts_sql() {
-  "Select
+  "SELECT
     id, title, is_public, owner_id, created_at, updated_at
-from
+FROM
     post"
 }
 

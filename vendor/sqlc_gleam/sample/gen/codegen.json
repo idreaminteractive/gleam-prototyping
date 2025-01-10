@@ -535,7 +535,7 @@
       "insert_into_table": null
     },
     {
-      "text": "Select\n    id, title, is_public, owner_id, created_at, updated_at\nfrom\n    post",
+      "text": "SELECT\n    id, title, is_public, owner_id, created_at, updated_at\nFROM\n    post",
       "name": "ListPosts",
       "cmd": ":many",
       "columns": [
@@ -962,7 +962,7 @@
       "insert_into_table": null
     },
     {
-      "text": "SELECT\n    p.id,\n    p.title,\n    u.id as uid,\n    u.email\nfrom\n    post p\n    join user u on u.id = p.owner_id\nwhere\n    u.id = ?",
+      "text": "SELECT\n    p.id,\n    p.title,\n    u.id AS uid,\n    u.email\nFROM\n    post p\n    INNER JOIN user u ON u.id = p.owner_id\nWHERE\n    u.id = ?",
       "name": "GetPostsByUser",
       "cmd": ":many",
       "columns": [
@@ -1107,7 +1107,7 @@
       "insert_into_table": null
     },
     {
-      "text": "SELECT\n    p.id,\n    p.title,\n    u.id as uid\nfrom\n    post p\n    left join user u on u.id = p.owner_id\nWHERE\n    u.id IN (/*SLICE:ids*/?)",
+      "text": "SELECT\n    p.id,\n    p.title,\n    u.id AS uid\nFROM\n    post p\n    LEFT JOIN user u ON u.id = p.owner_id\nWHERE\n    u.id IN (/*SLICE:ids*/?)",
       "name": "GetPostsByListOfUsers",
       "cmd": ":many",
       "columns": [
@@ -1226,7 +1226,7 @@
       "insert_into_table": null
     },
     {
-      "text": "insert into\n    user (name, email)\nvalues\n    (?, ?) returning id, name, optional_example, email, created_at, updated_at",
+      "text": "INSERT INTO\n    user (name, email)\nVALUES\n    (?, ?) returning id, name, optional_example, email, created_at, updated_at",
       "name": "CreateUser",
       "cmd": ":one",
       "columns": [
@@ -1456,7 +1456,7 @@
       }
     },
     {
-      "text": "insert into\n    post (title, owner_id)\nvalues\n    (?, ?) returning id, title, is_public, owner_id, created_at, updated_at",
+      "text": "INSERT INTO\n    post (title, owner_id)\nVALUES\n    (?, ?) returning id, title, is_public, owner_id, created_at, updated_at",
       "name": "CreatePost",
       "cmd": ":one",
       "columns": [
@@ -1686,7 +1686,7 @@
       }
     },
     {
-      "text": "update\n    post\nset\n    title = ?\nwhere\n    id = ? returning id, title, is_public, owner_id, created_at, updated_at",
+      "text": "UPDATE\n    post\nSET\n    title = ?\nWHERE\n    id = ? returning id, title, is_public, owner_id, created_at, updated_at",
       "name": "UpdatePost",
       "cmd": ":one",
       "columns": [
@@ -1912,7 +1912,7 @@
       "insert_into_table": null
     },
     {
-      "text": "delete from\n    post",
+      "text": "DELETE FROM\n    post",
       "name": "ClearPosts",
       "cmd": ":exec",
       "columns": [],

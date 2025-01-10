@@ -10,7 +10,7 @@ gleam add sqlc_gleam@1
 import sqlc_gleam
 
 pub fn main() {
-  // TODO: An example of the project in use
+  
 }
 ```
 

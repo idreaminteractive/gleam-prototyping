@@ -1,0 +1,35 @@
+pub type UpdatePost {
+UpdatePost(
+id: Int,
+title: String,
+is_public: Option(Bool),
+owner_id: Int,
+created_at: birl.Time,
+updated_at: birl.Time,
+)
+}
+
+fn update_post_decoder() {
+use id <- decode.field(0, decode.int) use title <- decode.field(1, decode.string) use is_public <- decode.field(2,
+    decode.optional(sqlight.decode_bool())) use owner_id <- decode.field(3, decode.int) use created_at <-
+    decode.field(4, decode_birl_time_from_string()) use updated_at <- decode.field(5, decode_birl_time_from_string())
+    decode.success(UpdatePost( id:, title:, is_public:, owner_id:, created_at:, updated_at:, )) } fn update_post_sql() { "UPDATE
+    post
+SET
+    title = ?
+WHERE
+    id = ? returning id, title, is_public, owner_id, created_at, updated_at" } pub fn update_post(conn:
+    sqlight.Connection, title title: String, id id: Int) { sqlight.query( update_post_sql(), on: conn, with:
+    [sqlight.text(title), sqlight.int(id)], expecting: update_post_decoder(), ) |> result.try(fn(x) {
+    case x {
+    [val] -> Ok(val)
+    [] -> Error(sqlight.SqlightError(sqlight.Notfound, "No records found", 0))
+    _ ->
+    Error(sqlight.SqlightError(
+    sqlight.Mismatch,
+    "More than one record found",
+    0,
+    ))
+    }
+    })
+    }

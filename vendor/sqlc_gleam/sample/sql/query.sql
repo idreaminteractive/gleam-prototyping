@@ -5,9 +5,9 @@ FROM
     user;
 
 -- name: ListPosts :many 
-Select
+SELECT
     *
-from
+FROM
     post;
 
 -- name: GetUserById :one 
@@ -31,45 +31,45 @@ WHERE
 SELECT
     p.id,
     p.title,
-    u.id as uid,
+    u.id AS uid,
     u.email
-from
+FROM
     post p
-    join user u on u.id = p.owner_id
-where
+    INNER JOIN user u ON u.id = p.owner_id
+WHERE
     u.id = ?;
 
 -- name: GetPostsByListOfUsers :many 
 SELECT
     p.id,
     p.title,
-    u.id as uid
-from
+    u.id AS uid
+FROM
     post p
-    left join user u on u.id = p.owner_id
+    LEFT JOIN user u ON u.id = p.owner_id
 WHERE
     u.id IN (sqlc.slice('ids'));
 
 -- name: CreateUser :one 
-insert into
+INSERT INTO
     user (name, email)
-values
+VALUES
     (?, ?) returning *;
 
 -- name: CreatePost :one 
-insert into
+INSERT INTO
     post (title, owner_id)
-values
+VALUES
     (?, ?) returning *;
 
 -- name: UpdatePost :one 
-update
+UPDATE
     post
-set
+SET
     title = ?
-where
+WHERE
     id = ? returning *;
 
 -- name: ClearPosts :exec 
-delete from
+DELETE FROM
     post;

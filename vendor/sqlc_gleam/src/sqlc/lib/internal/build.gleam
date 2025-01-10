@@ -1,11 +1,11 @@
 import gleam/int
-import gleam/io
 import gleam/list
 
 import gleam/string
 import sqlc/lib/internal/sqlc
 
-// TODO - investigate templating libraries instead as the string interp sucks 
+// TODO - setup glemplate to read + parse all the options
+// TODO - build out using glemplate to send out to the text data 
 // TODO - add in ability to handle `in` queries
 
 // TODO - find out how to test generated code like this
